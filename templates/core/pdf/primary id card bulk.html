@@ -1,0 +1,327 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ID Card Bulk</title>
+
+<style>
+
+@page {
+    size: 650px 1028px;
+    margin: 0;
+}
+
+body{
+    margin:0;
+    padding:0;
+    background:#ffffff;
+}
+
+.page{
+    width:650px;
+    height:1028px;
+    margin:0 auto;
+    overflow:hidden;
+    page-break-after:always;
+}
+
+.page:last-child{
+    page-break-after:auto;
+}
+
+@media screen {
+    body {
+        background:#6c7074;
+        padding:12px 0;
+    }
+    .page {
+        background:#ffffff;
+        margin-bottom:16px;
+        box-shadow:0 0 0 1px #4f5256;
+    }
+}
+
+.idcard-header-bar,
+.idcard-footer-bar{
+    background:{{ template_setting.accent_color|default:'#274e13' }};
+    color:#ffffff;
+    overflow:hidden;
+}
+
+.idcard-header-bar{
+    height:170px;
+}
+
+.idcard-footer-bar{
+    height:120px;
+    background:{{ template_setting.background_color|default:'#274e13' }};
+}
+
+.idcard-brand-wrap{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    padding:0 30px;
+    box-sizing:border-box;
+    position:relative;
+}
+
+.idcard-logo-left .idcard-header-logo{
+    position:absolute;
+    left:30px;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+.idcard-logo-right .idcard-header-logo{
+    position:absolute;
+    right:30px;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+.idcard-align-left{
+    justify-content:flex-start;
+}
+
+.idcard-align-center{
+    justify-content:center;
+}
+
+.idcard-align-right{
+    justify-content:flex-end;
+}
+
+.idcard-brand-logo{
+    width:88px;
+    height:88px;
+    object-fit:contain;
+    flex-shrink:0;
+    background:transparent;
+    border-radius:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+.idcard-brand-text{
+    text-align:left;
+}
+
+.idcard-header-text{
+    width:100%;
+    text-align:center;
+}
+
+.idcard-text-left{
+    text-align:left;
+}
+
+.idcard-text-center{
+    text-align:center;
+}
+
+.idcard-text-right{
+    text-align:right;
+}
+
+.idcard-brand-title{
+    margin:0;
+    font-family:Arial;
+    font-size:{{ template_setting.title_font_size|default:38 }}px;
+    font-weight:700;
+    line-height:1.1;
+}
+
+.idcard-brand-subtitle{
+    margin:8px 0 0;
+    font-family:Arial;
+    font-size:{{ template_setting.text_font_size|default:22 }}px;
+    line-height:1.2;
+}
+
+.idcard-principal-sign-wrap{
+    position:absolute;
+    right:40px;
+    bottom:145px;
+    width:170px;
+    text-align:center;
+    z-index:2;
+}
+
+.idcard-principal-sign{
+    max-width:150px;
+    max-height:70px;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 8px;
+}
+
+.idcard-principal-sign-line{
+    border-top:2px solid #1f2937;
+    padding-top:6px;
+    font-family:Arial;
+    font-size:18px;
+    font-weight:700;
+    color:#1f2937;
+}
+
+.idcard-detail-line{
+    margin:12px 0;
+    line-height:1.35;
+}
+
+.idcard-detail-label{
+    color:{{ template_setting.text_color|default:'#000080' }};
+}
+
+.idcard-detail-value{
+    color:{{ template_setting.border_color|default:'#000000' }};
+}
+
+</style>
+
+</head>
+
+<body>
+
+{% for card in student_cards %}
+
+<!-- ================= FRONT SIDE ================= -->
+
+<div class="page">
+
+<table width="650" height="1028" cellspacing="0" cellpadding="0" align="center"
+style="width:650px;height:1028px;background-color:#ffffff;position:relative;">
+
+<tr>
+<td class="idcard-watermark-wrap" style="position:absolute;width:650px;height:1028px;text-align:center;">
+<img class="idcard-watermark" src="{% static 'images/school_logo.png' %}"
+style="width:400px;opacity:0.08;margin-top:636px;">
+</td>
+</tr>
+
+<tr>
+<td align="center">
+<div class="idcard-header-bar idcard-logo-{{ idcard_logo_position|default:'left' }}">
+  <div class="idcard-brand-wrap">
+    <img
+      class="idcard-brand-logo idcard-header-logo"
+      src="{% if school_logo %}{{ school_logo }}{% else %}{% static 'images/school_logo.png' %}{% endif %}"
+      alt="School logo">
+    <div class="idcard-brand-text idcard-header-text">
+      <p class="idcard-brand-title idcard-header-title">{{ school_title|default:'Student Identity Card' }}</p>
+      <p class="idcard-brand-subtitle idcard-header-subtitle">{{ idcard_subtitle|default:'Official School Card' }}</p>
+    </div>
+  </div>
+</div>
+</td>
+</tr>
+
+<tr class="idcard-student-photo-row">
+<td align="center" style="padding-top:40px;">
+<img class="idcard-student-photo" src="{% if card.student.photo %}{{ card.student.photo.url }}{% else %}{{ card.student_image }}{% endif %}"
+width="200" height="250"
+style="width:160px;height:200px;object-fit:cover;border:3px solid #000;">
+</td>
+</tr>
+
+<tr>
+<td class="idcard-front-details" style="padding:40px 40px;font-family:Arial;font-size:32px;color:#000;">
+
+<p class="idcard-detail-line"><span class="idcard-detail-label idcard-name-label">Student's Name</span> : <span class="idcard-detail-value">{{ card.student.name }}</span></p>
+
+<p class="idcard-detail-line"><span class="idcard-detail-label idcard-father-label">Father's Name</span> : <span class="idcard-detail-value">{{ card.student.father_name }}</span></p>
+
+<p class="idcard-detail-line"><span class="idcard-detail-label idcard-class-label">Class</span> : <span class="idcard-detail-value">{{ card.student.student_class }}{% if card.student.section %} - {{ card.student.section }}{% endif %}</span></p>
+
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="bottom">
+<div class="idcard-footer-bar">
+  <div class="idcard-brand-wrap">
+    <div class="idcard-brand-text idcard-footer-text" style="display:none;">
+      <p class="idcard-brand-title idcard-footer-title" style="font-size:26px;">{{ school_title|default:'School Name' }}</p>
+      <p class="idcard-brand-subtitle idcard-footer-subtitle" style="font-size:18px;">Student Services</p>
+    </div>
+  </div>
+</div>
+<div class="idcard-principal-sign-wrap">
+  {% if principal_signature %}
+  <img class="idcard-principal-sign" src="{{ principal_signature }}" alt="Principal signature">
+  {% else %}
+  <img class="idcard-principal-sign" alt="Principal signature" style="display:none;">
+  {% endif %}
+  <div class="idcard-principal-sign-line">Principal Sign</div>
+</div>
+</td>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- ================= BACK SIDE ================= -->
+
+<div class="page">
+
+<table width="650" height="1028" cellspacing="0" cellpadding="0" align="center"
+style="width:650px;height:1028px;background-color:#ffffff;position:relative;">
+
+<tr>
+<td class="idcard-watermark-wrap" style="position:absolute;width:650px;height:1028px;text-align:center;">
+<img class="idcard-watermark" src="{% static 'images/school_logo.png' %}"
+style="width:400px;opacity:0.08;margin-top:450px;">
+</td>
+</tr>
+
+<tr>
+<td class="idcard-back-title-bar" style="background-color:#274e13;height:120px;padding-left:40px;">
+<span class="idcard-back-title" style="color:#ffffff;font-size:48px;font-weight:bold;font-family:Arial;">
+Details of Student
+</span>
+</td>
+</tr>
+
+<tr>
+<td class="idcard-back-details" valign="top"
+style="padding:80px 60px 0 60px;font-family:Arial;color:#1a145a;font-size:42px;">
+
+<p class="idcard-detail-line" style="margin-bottom:80px;">
+<span class="idcard-detail-label idcard-dob-label">Date of Birth</span> : <span class="idcard-detail-value">{{ card.student.dob|date:"d/m/Y" }}</span>
+</p>
+
+<p class="idcard-detail-line" style="margin-bottom:80px;">
+<span class="idcard-detail-label idcard-admission-label">Admission No.</span> : <span class="idcard-detail-value">{{ card.student.admission_no }}</span>
+</p>
+
+<p class="idcard-detail-line" style="margin-bottom:80px;">
+<span class="idcard-detail-label idcard-contact-label">Contact No.</span> : <span class="idcard-detail-value">{{ card.student.mobile }}</span>
+</p>
+
+<p class="idcard-detail-line" style="margin-bottom:80px;">
+<span class="idcard-detail-label idcard-address-label">Address</span> : <span class="idcard-detail-value">{{ card.student.address }}</span>
+</p>
+
+<p class="idcard-detail-line" style="margin-bottom:80px;">
+<span class="idcard-detail-label idcard-year-label">Academic Year</span> : <span class="idcard-detail-value">{{ academic_year }}</span>
+</p>
+
+</td>
+</tr>
+
+</table>
+
+</div>
+
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+
+{% block page_subtitle %}
+ 
+{% endblock %}
+{% block content %}
+<div class="row">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="">
+              <h1 class="fs-3 mb-1">{% block title %}{% if current_school %}{{ current_school.name }} Dashboard{% else %}Dashboard{% endif %}{% endblock %}
+</h1>
+            
+            </div>
+            <div>
+              {% if current_school %}
+    <p class="text-muted mb-0">Workspace overview for <span class="fw-semibold">{{ current_school.name }}</span></p>
+  {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+ <div class="row g-3 mb-3">
+        <div class="col-lg-3 col-12">
+
+          <div class="card p-4  bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2">
+
+            <div class="d-flex gap-3 ">
+              <div class="icon-shape icon-md bg-primary text-white rounded-2">
+                <i class="ti ti-report-analytics fs-4"></i>
+              </div>
+              <div>
+                <h2 class="mb-3 fs-6">Total Students</h2>
+                <h3 class="fw-bold mb-0">{{ total_students }}</h3>
+                <a href="" class="text-primary mb-0 small">View All</a>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="col-lg-5 col-12">
+          <div class="card p-4 border rounded-2 h-100">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+              <div>
+                <h2 class="mb-1 fs-6">Students by Gender</h2>
+                <p class="text-muted small mb-0">{{ gender_chart.total }} students with gender data</p>
+              </div>
+              <div class="icon-shape icon-md bg-info text-white rounded-2">
+                <i class="ti ti-chart-pie fs-4"></i>
+              </div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-4">
+              <div class="gender-pie{% if not gender_chart.total %} gender-pie-empty{% endif %}" style="--male-angle: {{ gender_chart.male_angle|floatformat:2 }}deg;">
+                <div class="gender-pie-inner">
+                  <span class="fw-bold">{{ gender_chart.total }}</span>
+                  <span class="text-muted small">Total</span>
+                </div>
+              </div>
+              <div class="gender-legend flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="gender-dot gender-dot-male"></span>
+                    <span class="fw-semibold">Male</span>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-bold">{{ gender_chart.male }}</div>
+                    <div class="text-muted small">{{ gender_chart.male_percent|floatformat:1 }}%</div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between gap-3">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="gender-dot gender-dot-female"></span>
+                    <span class="fw-semibold">Female</span>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-bold">{{ gender_chart.female }}</div>
+                    <div class="text-muted small">{{ gender_chart.female_percent|floatformat:1 }}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</div>
+
+
+
+
+<div class="row g-3">
+   <h3 class="fs-3 mb-1 mt-5">
+      Certificate
+   </h3>
+   {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_student %}
+      <div class="row g-3 mb-3">
+        <div class="col-lg-3 col-12">
+          <a   href="{% url 'bonafide_form' %}">
+
+          <div class="card p-4  bg-danger bg-opacity-10 border border-primary border-opacity-25 rounded-2">
+
+            <div class="d-flex gap-3 ">
+              <div class="icon-shape icon-md bg-danger text-white rounded-2">
+                <i class="ti ti-file-analytics fs-4"></i>
+              </div>
+              <div>
+                <h2 class="mb-3 fs-6">Generate Bonafide</h2>
+                <h3 class="fw-bold mb-0">{{ document_counts.bonafide }}</h3>
+              </div>
+            </div>
+          </div>
+</a>
+
+        </div>
+        <div class="col-lg-3 col-12">
+          <a  href="{% url 'idcard_form' %}">
+    <div class="card p-4  bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2">
+
+            <div class="d-flex gap-3 align-itmes-center">
+              <div class="icon-shape icon-md bg-success text-white rounded-2">
+                <i class="ti ti-id fs-4"></i>
+              </div>
+              <div>
+                <h2 class="mb-3 fs-6">Generate ID Card</h2>
+                                <h3 class="fw-bold mb-0">{{ document_counts.id_card }}</h3>
+
+              </div>
+            </div>
+          </div>
+          </a>
+      
+
+
+        </div>
+        <div class="col-lg-3 col-12">
+<a href="{% url 'nirgam_form' %}">
+          <div class="card p-4  bg-info bg-opacity-10 border border-info border-opacity-25 rounded-2">
+
+            <div class="d-flex gap-3 ">
+              <div class="icon-shape icon-md bg-info text-white rounded-2">
+                <i class="ti ti-id fs-4"></i>
+              </div>
+              <div>
+                <h2 class="mb-3 fs-6"> Generate Nirgam</h2>
+                <h3 class="fw-bold mb-0">{{ document_counts.nirgam }}</h3>
+              </div>
+            </div>
+          </div>
+</a>
+
+        </div>
+         {% endif %}
+  {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_exam %}
+        <div class="col-lg-3 col-12">
+<a  href="{% url 'hallticket_form' %}">
+          <div class="card p-4  bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-2">
+
+            <div class="d-flex gap-3 ">
+              <div class="icon-shape icon-md bg-warning text-white rounded-2">
+                <i class="ti ti-notes fs-4"></i>
+              </div>
+              <div>
+                <h2 class="mb-3 fs-6"> Generate Hall Ticket</h2>
+                <h3 class="fw-bold mb-0">{{ document_counts.hall_ticket }}</h3>
+              </div>
+            </div>
+          </div>
+
+</a>
+        </div>
+        {% endif %}
+ 
+</div>
+<div class="row align-items-center mt-5 mb-3">
+  <div class="col-md-8 col-12">
+    <h3 class="fs-3 mb-1">
+      Fees Management
+   </h3>
+  </div>
+  {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_feereceipt %}
+    <div class="col-md-4 col-12">
+      <form method="get" class="d-flex justify-content-md-end">
+        <select name="fee_year" class="form-select w-auto" onchange="this.form.submit()">
+          {% if fee_years %}
+            {% for year in fee_years %}
+              <option value="{{ year }}" {% if selected_fee_year == year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+          {% else %}
+            <option value="{{ selected_fee_year }}">{{ selected_fee_year }}</option>
+          {% endif %}
+        </select>
+      </form>
+    </div>
+  {% endif %}
+</div>
+<div class="row g-3 mb-3">
+  {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_feereceipt %}
+    <div class="col-lg-4 col-12">
+      <div class="card p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2 h-100">
+        <div class="d-flex gap-3">
+          <div class="icon-shape icon-md bg-primary text-white rounded-2">
+            <i class="ti ti-receipt-rupee fs-4"></i>
+          </div>
+          <div>
+            <h2 class="mb-3 fs-6">Total Fees</h2>
+            <h3 class="fw-bold mb-0">&#8377;{{ selected_fee_summary.total_fees }}</h3>
+            <a href="{% url 'fee_receipt_list' %}" class="text-primary mb-0 small">{{ selected_fee_year }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-12">
+      <div class="card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2 h-100">
+        <div class="d-flex gap-3">
+          <div class="icon-shape icon-md bg-success text-white rounded-2">
+            <i class="ti ti-cash fs-4"></i>
+          </div>
+          <div>
+            <h2 class="mb-3 fs-6">Total Fees Collected</h2>
+            <h3 class="fw-bold mb-0">&#8377;{{ selected_fee_summary.collected_fees }}</h3>
+            <a href="{% url 'fee_receipt_list' %}" class="text-success mb-0 small">{{ selected_fee_year }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-12">
+      <div class="card p-4 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-2 h-100">
+        <div class="d-flex gap-3">
+          <div class="icon-shape icon-md bg-warning text-white rounded-2">
+            <i class="ti ti-alert-circle fs-4"></i>
+          </div>
+          <div>
+            <h2 class="mb-3 fs-6">Remaining Fees</h2>
+            <h3 class="fw-bold mb-0">&#8377;{{ selected_fee_summary.remaining_fees }}</h3>
+            <a href="{% url 'fee_receipt_list' %}" class="text-warning mb-0 small">{{ selected_fee_year }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if not fee_years %}
+      <div class="col-12">
+        <div class="card p-4 border rounded-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted">No fee receipts recorded yet.</span>
+            <a href="{% url 'fee_receipt_add' %}" class="btn btn-primary">Add Receipt</a>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+<style>
+  .gender-pie {
+    align-items: center;
+    background: conic-gradient(#2563eb 0 var(--male-angle), #db2777 var(--male-angle) 360deg);
+    border-radius: 50%;
+    display: flex;
+    flex: 0 0 150px;
+    height: 150px;
+    justify-content: center;
+    width: 150px;
+  }
+
+  .gender-pie-inner {
+    align-items: center;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    height: 92px;
+    justify-content: center;
+    width: 92px;
+  }
+
+  .gender-pie-empty {
+    background: #e5e7eb;
+  }
+
+  .gender-dot {
+    border-radius: 50%;
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+  }
+
+  .gender-dot-male {
+    background: #2563eb;
+  }
+
+  .gender-dot-female {
+    background: #db2777;
+  }
+</style>
+{% endblock %}

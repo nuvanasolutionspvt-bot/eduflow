@@ -1,0 +1,94 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% if current_school %}{{ current_school.name }}{% else %}School Administration{% endif %}{% endblock %}</title>
+  <link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+  <link rel="stylesheet"  href="{% static 'assets/css/main.css' %}">
+  <link rel="stylesheet"  href="{% static 'assets/css/style.css' %}">
+
+  <style>
+    .sidebar .documents-toggle {
+      width: auto;
+    }
+    .sidebar .documents-toggle .ti-chevron-down {
+      font-size: 14px;
+      transition: transform .2s ease;
+    }
+    .sidebar .documents-toggle[aria-expanded="true"] .ti-chevron-down {
+      transform: rotate(180deg);
+    }
+    .sidebar .documents-submenu {
+      margin: 0 12px 4px;
+      padding-left: 12px;
+      border-left: 1px solid #e5e7eb;
+    }
+    .sidebar .documents-submenu .nav-link {
+      margin: 1px 0;
+      padding: 7px 10px;
+      font-size: 13px;
+      gap: 10px;
+    }
+    .sidebar .documents-submenu .nav-link .ti {
+      font-size: 16px;
+    }
+    .sidebar.collapsed .documents-submenu {
+      display: none;
+    }
+  </style>
+
+</head>
+<body >
+  
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+  <div class="card " style="max-width:420px; width:100%;">
+    <div class="card-body p-5">
+      <div class="text-center mb-3">
+      <a href="index.html" class="mb-4 d-inline-block"><img src="./assets/images/logo-icon.svg" alt="" width="36">
+      <span class=" ms-2"> <img src="./assets/images/logo.svg" alt=""></span>
+      </a>
+        <h1 class="card-title mb-5 h5">Sign in to your account</h1>
+
+      </div>
+  <form method="post">
+                {% csrf_token %}
+              
+
+                <div class="mb-3">
+                  <label class="form-label">Email or Username</label>
+                  {{ form.username }}
+                </div>
+
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label mb-0">Password</label>
+                   
+                  </div>
+                  {{ form.password }}
+                </div>
+
+                {% if form.errors %}
+                  <div class="alert alert-danger py-2">{{ form.non_field_errors|striptags|default:'Invalid username or password.' }}</div>
+                {% endif %}
+
+                <div class="form-check mb-4">
+                  <input class="form-check-input" type="checkbox" id="rememberDevice">
+                  <label class="form-check-label" for="rememberDevice">Remember this device</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Sign In to Portal</button>
+              </form>
+
+
+    <div class="text-center mt-3 small text-muted">
+        Don't have an account? <a href="{% url 'school_register' %}"  class="link-primary">Sign up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

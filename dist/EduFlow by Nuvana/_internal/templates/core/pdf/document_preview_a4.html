@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-primary" onclick="printPreviewFrame()">
+        Print
+      </button>
+    </div>
+    <iframe
+      id="docPreviewFrameA4"
+      src="{{ preview_url }}"
+      title="Document Preview"
+      style="width:100%;height:1200px;border:1px solid #dee2e6;border-radius:.375rem;background:#fff;"
+      loading="lazy"></iframe>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function printA4PreviewFrame() {
+  const frame = document.getElementById('docPreviewFrameA4');
+  if (!frame || !frame.contentWindow) {
+    return;
+  }
+  const win = frame.contentWindow;
+  const doc = win.document;
+  if (!doc) {
+    return;
+  }
+
+  let helperStyle = doc.getElementById('print-helper-style-a4');
+  if (!helperStyle) {
+    helperStyle = doc.createElement('style');
+    helperStyle.id = 'print-helper-style-a4';
+    helperStyle.textContent = `
+      @page { size: A4 portrait; margin: 0 !important; }
+      html, body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    `;
+    doc.head.appendChild(helperStyle);
+  }
+
+  doc.querySelectorAll('[background]').forEach((el) => {
+    const bg = el.getAttribute('background');
+    if (!bg) return;
+    el.style.setProperty('background-image', `url("${bg}")`, 'important');
+    el.style.setProperty('background-repeat', 'no-repeat', 'important');
+    el.style.setProperty('background-size', '100% 100%', 'important');
+    el.style.setProperty('background-position', 'center', 'important');
+  });
+
+  const imgs = Array.from(doc.images || []);
+  const pending = imgs
+    .filter((img) => !img.complete)
+    .map((img) => new Promise((resolve) => {
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+    }));
+
+  Promise.all(pending).finally(() => {
+    win.focus();
+    win.print();
+  });
+}
+
+
+function printPreviewFrame() {
+
+  const frame = document.getElementById('docPreviewFrameA4');
+
+  if (!frame || !frame.contentWindow) {
+    return;
+  }
+
+  const win = frame.contentWindow;
+  const doc = win.document;
+
+  if (!doc) {
+    return;
+  }
+
+  /* Inject print CSS */
+  let helperStyle = doc.getElementById('print-helper-style');
+
+  if (!helperStyle) {
+
+    helperStyle = doc.createElement('style');
+    helperStyle.id = 'print-helper-style';
+
+    helperStyle.textContent = `
+      @page { margin: 0 !important; }
+
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: max-content !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      table[width="1600"] {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      table[height="800"] {
+        height: auto !important;
+      }
+    `;
+
+    doc.head.appendChild(helperStyle);
+  }
+
+  /* Convert background attributes to CSS */
+  doc.querySelectorAll('[background]').forEach((el) => {
+
+    const bg = el.getAttribute('background');
+
+    if (!bg) return;
+
+    el.style.setProperty('background-image', `url("${bg}")`, 'important');
+    el.style.setProperty('background-repeat', 'no-repeat', 'important');
+    el.style.setProperty('background-size', '100% 100%', 'important');
+    el.style.setProperty('background-position', 'center', 'important');
+
+  });
+
+
+  /* Wait for images to load */
+  const imgs = Array.from(doc.images || []);
+
+  const pending = imgs
+    .filter((img) => !img.complete)
+    .map((img) => new Promise((resolve) => {
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+    }));
+
+
+  Promise.all(pending).finally(() => {
+
+    const body = doc.body;
+    const html = doc.documentElement;
+
+    const contentWidth = Math.max(
+      body ? body.scrollWidth : 0,
+      html ? html.scrollWidth : 0,
+      body ? body.offsetWidth : 0,
+      html ? html.offsetWidth : 0
+    );
+
+    const contentHeight = Math.max(
+      body ? body.scrollHeight : 0,
+      html ? html.scrollHeight : 0,
+      body ? body.offsetHeight : 0,
+      html ? html.offsetHeight : 0
+    );
+
+    /* Width-only fit */
+    const pageWidth = 794; // 210mm
+
+    const scaleX = contentWidth > 0 ? pageWidth / contentWidth : 1;
+    const fitScale = Math.min(1, scaleX);
+
+    if (body && fitScale < 1) {
+
+      body.setAttribute('data-print-fit-scale', String(fitScale));
+
+      body.style.transformOrigin = 'top left';
+      body.style.transform = `scale(${fitScale})`;
+      body.style.width = `${contentWidth}px`;
+
+    }
+
+    win.focus();
+    win.print();
+
+  });
+
+}
+</script>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hall Ticket</title>
+
+  <style>
+    :root {
+      --accent-color: {{ template_setting.accent_color|default:'#cb0804' }};
+      --border-color: {{ template_setting.border_color|default:'#cb0804' }};
+      --background-color: {{ template_setting.background_color|default:'#f5fcc8' }};
+      --text-color: {{ template_setting.text_color|default:'#000080' }};
+      --title-font-size: {{ template_setting.title_font_size|default:38 }}px;
+      --text-font-size: {{ template_setting.text_font_size|default:18 }}px;
+      --subtitle-font-size: {{ template_setting.text_font_size|default:18|add:2 }}px;
+      --ticket-border: {% if template_setting and template_setting.border_style == 'none' %}none{% else %}4px solid var(--border-color){% endif %};
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--background-color);
+      font-family: Arial, sans-serif;
+    }
+
+    .ticket {
+      width: 250mm;
+      margin: auto;
+      border: var(--ticket-border);
+      padding: 10px;
+      box-sizing: border-box;
+      background: var(--background-color);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      background: transparent;
+    }
+
+    .title {
+      text-align: center;
+      flex: 1;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: var(--title-font-size);
+      color: var(--accent-color);
+    }
+
+    .title p {
+      margin: 5px 0;
+      font-weight: 600;
+      font-size: var(--text-font-size);
+      color: var(--text-color);
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: var(--subtitle-font-size);
+      color: var(--accent-color);
+      font-weight: bold;
+      margin: 0px 0;
+    }
+
+    .content {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .details {
+      font-size: var(--text-font-size);
+      color: var(--text-color);
+      font-weight: bold;
+    }
+
+    .details p {
+      margin: 12px 0;
+    }
+.details p span{
+  text-decoration: underline;
+}
+    .highlight {
+      color: #d00000;
+    }
+
+    .photo-box {
+      width: 110px;
+      margin-top: -32px;
+      height: 150px;
+      background: #fff;
+    }
+
+    .photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .sign {
+      text-align: right;
+      margin-top: 0px;
+    }
+
+    .sign img {
+      width: 150px;
+      margin-top: -18px;
+    }
+
+    .signature-placeholder {
+      width: 150px;
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.28);
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .header.logo-left {
+      justify-content: flex-start;
+    }
+
+    .header.logo-left .logo-right {
+      display: none;
+    }
+
+    .header.logo-right {
+      justify-content: flex-end;
+    }
+
+    .header.logo-right .logo-left {
+      display: none;
+    }
+
+    .header.logo-center {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .header.logo-center .title {
+      width: 100%;
+      order: 2;
+    }
+
+    .header.logo-center .logo-left {
+      display: none;
+    }
+
+    .sign-content{font-size: 16px;
+      margin-top: -10px;
+      color: #d00000
+
+    } 
+
+    .title.text-left {
+      text-align: left;
+    }
+
+    .title.text-right {
+      text-align: right;
+    }
+
+    .content.image-left {
+      flex-direction: row-reverse;
+    }
+
+    .content.image-top {
+      flex-direction: column-reverse;
+      align-items: center;
+    }
+
+    .content.image-top .details,
+    .content.image-bottom .details {
+      width: 100%;
+    }
+
+    .content.image-bottom {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 10mm;
+      }
+
+      body {
+        background: none;
+      }
+
+      .ticket {
+        width: 100%;
+        margin: 0;
+        border: 4px solid var(--accent-color);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="ticket">
+
+    <!-- HEADER -->
+    <div class="header {% if template_setting.logo_position == 'left' %}logo-left{% elif template_setting.logo_position == 'right' %}logo-right{% elif template_setting.logo_position == 'center' %}logo-center{% endif %}">
+      {% if template_setting.logo_position != 'right' %}
+      <img class="logo-left" src="{% if template_setting and template_setting.custom_logo %}{{ template_setting.custom_logo.url }}{% else %}{{ school_logo|default:'/media/school/logo/School_Logo.png' }}{% endif %}">
+      {% endif %}
+
+      <div class="title {% if template_setting.text_position == 'left' %}text-left{% elif template_setting.text_position == 'right' %}text-right{% endif %}">
+        <h1>{{ school_title|default:'School Name' }}</h1>
+        <p>{{ school_address|default:'' }}</p>
+      </div>
+
+      {% if template_setting.logo_position != 'left' and template_setting.logo_position != 'center' %}
+      <img class="logo-right" src="{% if template_setting and template_setting.custom_logo %}{{ template_setting.custom_logo.url }}{% else %}{{ school_logo|default:'/media/school/logo/School_Logo.png' }}{% endif %}">
+      {% endif %}
+    </div>
+
+    <!-- SUBTITLE -->
+    <div class="subtitle">
+      1st Term Exam Hall Ticket Academic Year <span id="year"></span>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content {% if template_setting.image_position == 'left' %}image-left{% elif template_setting.image_position == 'top' %}image-top{% elif template_setting.image_position == 'bottom' %}image-bottom{% endif %}">
+
+      <!-- LEFT DETAILS -->
+      <div class="details">
+        <p>Candidate's Name: <span>{{ student.name }}</span></p>
+        <p>Father's Name: <span>{{ student.father_name }}</span></p>
+        <p>
+          Exam Center:
+          <span class="highlight">{{ school_title|default:'School Name' }}</span>
+        </p>
+        <p>
+          Class: <span>{{ student.student_class }}{% if student.section %} - {{ student.section }}{% endif %}</span>
+          &nbsp;&nbsp;&nbsp;
+          Seat No: <span class="highlight">{{ seat_number }}</span>
+        </p>
+      </div>
+
+      <!-- PHOTO -->
+      <div class="photo-box">
+        {% if student.photo %}
+          <img src="{{ student.photo.url }}">
+        {% elif student_photo %}
+          <img src="{{ student_photo }}">
+        {% else %}
+          PHOTO
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- SIGN -->
+    <div class="sign">
+      {% if principal_signature %}
+      <img src="{{ principal_signature }}" width="150">
+      {% else %}
+      <div class="signature-placeholder">Signature</div>
+      {% endif %}
+
+      <p class="sign-content">
+        Exam Incharge Sign 
+      </p>
+    </div>
+
+  </div>
+<script>
+  document.getElementById("year").innerText = new Date().getFullYear();
+</script>
+</body>
+</html>

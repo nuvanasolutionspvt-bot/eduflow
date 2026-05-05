@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block title %}Subscription{% endblock %}
+{% block page_title %}Subscription{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <div class="dashboard-section-label">Current Access</div>
+        {% if subscription.annual_plan_is_active %}
+          <h4 class="mb-2">Annual plan active</h4>
+          <p class="text-muted mb-3">Your school can download without limits.</p>
+          <div class="border rounded p-3 bg-light">
+            <div><strong>Plan price:</strong> Rs. {{ subscription.annual_price }}</div>
+            <div><strong>Valid until:</strong> {{ subscription.annual_plan_expires_on }}</div>
+            <div><strong>Free downloads used:</strong> {{ subscription.free_downloads_used }}</div>
+          </div>
+        {% elif subscription.trial_is_active %}
+          <h4 class="mb-2">3-day trial active</h4>
+          <p class="text-muted mb-3">The app is in trial mode. Only the first file download is free.</p>
+          <div class="border rounded p-3 bg-light">
+            <div><strong>Trial started:</strong> {{ subscription.trial_started_on }}</div>
+            <div><strong>Trial ends:</strong> {{ subscription.trial_expires_on }}</div>
+            <div><strong>Free downloads left:</strong> {{ subscription.remaining_free_downloads }}</div>
+          </div>
+        {% else %}
+          <h4 class="mb-2">Trial expired</h4>
+          <p class="text-muted mb-3">All download buttons now require an active subscription.</p>
+          <div class="border rounded p-3 bg-light">
+            <div><strong>Trial started:</strong> {{ subscription.trial_started_on }}</div>
+            <div><strong>Trial ended:</strong> {{ subscription.trial_expires_on }}</div>
+            <div><strong>Free downloads used:</strong> {{ subscription.free_downloads_used }}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card shadow-sm h-100 border-primary">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+          <div>
+            <div class="dashboard-section-label">Plan</div>
+            <h3 class="mb-1">1 Year Plan</h3>
+            <p class="text-muted mb-0">Unlimited downloads for one school workspace.</p>
+          </div>
+          <div class="text-end">
+            <div class="fs-2 fw-bold text-primary">Rs. 5999</div>
+            <div class="text-muted small">per year</div>
+          </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 g-2 mb-4">
+          <div class="col"><div class="border rounded p-3 h-100">Unlimited file downloads</div></div>
+          <div class="col"><div class="border rounded p-3 h-100">Works for ID cards, backups, and templates</div></div>
+          <div class="col"><div class="border rounded p-3 h-100">Plan validity for 365 days</div></div>
+          <div class="col"><div class="border rounded p-3 h-100">Starts immediately after activation</div></div>
+        </div>
+
+        {% if reason %}
+          <div class="alert alert-warning">
+            Download access was blocked for <strong>{{ reason }}</strong>. Activate the annual plan to continue.
+          </div>
+        {% endif %}
+
+        {% if razorpay_enabled %}
+        <div class="alert alert-info">
+          Pay securely with Razorpay. The annual plan is activated only after the payment signature is verified on the server.
+        </div>
+
+        <button type="button" id="razorpay-subscribe-button" class="btn btn-primary btn-lg">
+          Pay Rs. 5999 with Razorpay
+        </button>
+
+        <form method="post" action="{{ payment_verify_url }}" id="razorpay-verify-form" class="d-none">
+          {% csrf_token %}
+          {% if next_url %}
+            <input type="hidden" name="next" value="{{ next_url }}">
+          {% endif %}
+          <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+          <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+          <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+        </form>
+        {% else %}
+        <div class="alert alert-warning mb-0">
+          Razorpay is not configured yet. Set <code>RAZORPAY_KEY_ID</code> and <code>RAZORPAY_KEY_SECRET</code> in the app environment, then reopen this page.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if razorpay_enabled %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+const subscribeButton = document.getElementById('razorpay-subscribe-button');
+const verifyForm = document.getElementById('razorpay-verify-form');
+
+if (subscribeButton && verifyForm) {
+  subscribeButton.addEventListener('click', async () => {
+    const originalText = subscribeButton.textContent;
+    subscribeButton.disabled = true;
+    subscribeButton.textContent = 'Preparing payment...';
+
+    try {
+      const response = await fetch('{{ payment_create_url }}', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      const payload = await response.json();
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.message || 'Could not start Razorpay payment.');
+      }
+
+      const options = {
+        key: payload.key,
+        amount: payload.amount,
+        currency: payload.currency,
+        name: payload.name,
+        description: payload.description,
+        order_id: payload.order_id,
+        handler: function (paymentResponse) {
+          document.getElementById('razorpay_payment_id').value = paymentResponse.razorpay_payment_id;
+          document.getElementById('razorpay_order_id').value = paymentResponse.razorpay_order_id;
+          document.getElementById('razorpay_signature').value = paymentResponse.razorpay_signature;
+          verifyForm.submit();
+        },
+        modal: {
+          ondismiss: function () {
+            subscribeButton.disabled = false;
+            subscribeButton.textContent = originalText;
+          }
+        },
+        theme: {
+          color: '#0d6efd'
+        }
+      };
+
+      const razorpayCheckout = new Razorpay(options);
+      razorpayCheckout.on('payment.failed', function () {
+        subscribeButton.disabled = false;
+        subscribeButton.textContent = originalText;
+        alert('Payment failed. Please try again.');
+      });
+      razorpayCheckout.open();
+    } catch (error) {
+      subscribeButton.disabled = false;
+      subscribeButton.textContent = originalText;
+      alert(error.message || 'Could not start Razorpay payment.');
+    }
+  });
+}
+</script>
+{% endif %}
+{% endblock %}

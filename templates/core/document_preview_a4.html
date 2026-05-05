@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card ">
+  <div class="card-body">
+
+    <!-- PRINT BUTTON -->
+    <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-primary" onclick="printPreviewFrame()">
+        Print
+      </button>
+    </div>
+
+    <!-- IFRAME PREVIEW -->
+    <iframe
+      id="docPreviewFrameA4"
+      src="{{ preview_url }}"
+      title="Document Preview"
+      style="width:100%; height:1200px; border:1px solid #dee2e6; border-radius:.375rem; background:#fff;"
+      loading="lazy">
+    </iframe>
+
+  </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+
+function printPreviewFrame() {
+
+  const frame = document.getElementById('docPreviewFrameA4');
+  if (!frame || !frame.contentWindow) return;
+
+  const win = frame.contentWindow;
+  const doc = win.document;
+  if (!doc) return;
+
+  /* ✅ CLEAN PRINT CSS */
+  let helperStyle = doc.getElementById('print-helper-style');
+
+  if (!helperStyle) {
+    helperStyle = doc.createElement('style');
+    helperStyle.id = 'print-helper-style';
+
+    helperStyle.textContent = `
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: visible !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        transform: none !important;
+        zoom: 1 !important;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      table {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      img {
+        max-width: 100% !important;
+      }
+    `;
+
+    doc.head.appendChild(helperStyle);
+  }
+
+  /* ✅ Fix background images */
+  doc.querySelectorAll('[background]').forEach((el) => {
+    const bg = el.getAttribute('background');
+    if (!bg) return;
+
+    el.style.backgroundImage = `url("${bg}")`;
+    el.style.backgroundRepeat = 'no-repeat';
+    el.style.backgroundSize = '100% 100%';
+    el.style.backgroundPosition = 'center';
+  });
+
+  /* ✅ Wait for images */
+  const imgs = Array.from(doc.images || []);
+
+  const pending = imgs
+    .filter(img => !img.complete)
+    .map(img => new Promise(resolve => {
+      img.onload = resolve;
+      img.onerror = resolve;
+    }));
+
+  Promise.all(pending).finally(() => {
+    win.focus();
+    win.print();
+  });
+
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div
+  class="row g-4 document-generation-workspace"
+  {% if preview_url_template %}data-live-preview="true"{% endif %}
+  data-preview-url-template="{{ preview_url_template|default:'' }}"
+  data-download-url-template="{{ download_url_template|default:'' }}">
+  <div class="col-lg-4 col-xl-3">
+    <div class="card h-100">
+      <div class="card-body">
+        {% if no_exams %}
+          <div class="alert alert-warning">
+            No exam found. Please <a href="{% url 'exam_add' %}" class="alert-link">add an exam</a> first.
+          </div>
+        {% endif %}
+        <form method="post" class="row g-3" data-document-preview-form="true">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="col-md-12">
+              <label class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="text-danger small">{{ field.errors|striptags }}</div>{% endif %}
+            </div>
+          {% endfor %}
+          <div class="col-12">
+            <button class="btn btn-primary w-100" type="submit">{{ submit_label }}</button>
+            {% if secondary_url and secondary_label %}
+              <a href="{{ secondary_url }}" class="btn btn-outline-secondary w-100 mt-2">{{ secondary_label }}</a>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8 col-xl-9">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+          <h5 class="mb-0">Preview</h5>
+          {% if preview_url_template %}
+            <div class="d-flex gap-2">
+              {% if download_url_template %}
+                <button type="button" class="btn btn-outline-success" data-document-download-button="true" disabled>
+                  Download JPG
+                </button>
+              {% endif %}
+              <button type="button" class="btn btn-primary" data-document-print-button="true" disabled>
+                Print
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        {% if preview_url_template %}
+          <div class="border rounded bg-white overflow-hidden">
+            <iframe
+              id="documentLivePreviewFrame"
+              title="Document Preview"
+              style="width:100%; min-height:760px; border:0; background:#fff;"
+              loading="lazy"></iframe>
+          </div>
+          <div class="text-muted text-center py-5" data-document-preview-empty="true">
+            Select a student to show the preview.
+          </div>
+        {% else %}
+          <div class="text-muted text-center py-5">
+            Select options on the left and click preview.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if preview_url_template %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const workspace = document.querySelector('[data-live-preview="true"]');
+  if (!workspace) return;
+
+  const form = workspace.querySelector('[data-document-preview-form="true"]');
+  const frame = document.getElementById('documentLivePreviewFrame');
+  const emptyState = workspace.querySelector('[data-document-preview-empty="true"]');
+  const printButton = workspace.querySelector('[data-document-print-button="true"]');
+  const downloadButton = workspace.querySelector('[data-document-download-button="true"]');
+  const previewTemplate = workspace.dataset.previewUrlTemplate || '';
+  const downloadTemplate = workspace.dataset.downloadUrlTemplate || '';
+
+  function buildUrl(template, markGenerated) {
+    const studentField = form.querySelector('[name="student"]');
+    const studentId = studentField ? studentField.value : '';
+    if (!studentId || !template) return '';
+
+    const params = new URLSearchParams();
+    Array.from(form.elements).forEach(function (field) {
+      if (!field.name || field.name === 'csrfmiddlewaretoken' || field.name === 'student') return;
+      if ((field.type === 'checkbox' || field.type === 'radio') && !field.checked) return;
+      if (field.value) params.set(field.name, field.value);
+    });
+    if (markGenerated) {
+      params.set('generated', '1');
+    }
+
+    const url = template.replace('__student_id__', encodeURIComponent(studentId));
+    const query = params.toString();
+    return query ? `${url}?${query}` : url;
+  }
+
+  function refreshPreview(markGenerated) {
+    const url = buildUrl(previewTemplate, markGenerated);
+    if (!url) {
+      frame.removeAttribute('src');
+      frame.classList.add('d-none');
+      emptyState.classList.remove('d-none');
+      if (printButton) printButton.disabled = true;
+      if (downloadButton) downloadButton.disabled = true;
+      return;
+    }
+
+    frame.src = url;
+    frame.classList.remove('d-none');
+    emptyState.classList.add('d-none');
+    if (printButton) printButton.disabled = false;
+    if (downloadButton) downloadButton.disabled = !buildUrl(downloadTemplate, false);
+  }
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    refreshPreview(true);
+  });
+
+  form.addEventListener('change', refreshPreview);
+
+  if (window.jQuery) {
+    jQuery(form).find('.select2').on('select2:select select2:clear change', refreshPreview);
+  }
+
+  if (printButton) {
+    printButton.addEventListener('click', function () {
+      if (!frame.contentWindow) return;
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+    });
+  }
+
+  if (downloadButton) {
+    downloadButton.addEventListener('click', function () {
+      const url = buildUrl(downloadTemplate, false);
+      if (url) window.location.href = url;
+    });
+  }
+
+  refreshPreview(false);
+});
+</script>
+{% endif %}
+{% endblock %}

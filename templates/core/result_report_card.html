@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% block title %}Report Card - {{ student.name }}{% endblock %}
+{% block page_title %}Report Card{% endblock %}
+{% block page_subtitle %}
+  <p class="text-muted mb-0">{{ student.name }} | {{ first_term.name }}{% if second_term %} and {{ second_term.name }}{% endif %}</p>
+{% endblock %}
+{% block content %}
+<style>
+  .report-card-actions {
+    max-width: 920px;
+    margin: 0 auto 1rem;
+  }
+  .report-card-print {
+    max-width: 920px;
+    margin: 0 auto;
+    background: {{ template_setting.background_color|default:'#ffffff' }};
+    color: {{ template_setting.text_color|default:'#111827' }};
+    border: {% if template_setting.border_style == 'none' %}none{% else %}3px {{ template_setting.border_style|default:'solid' }} {{ template_setting.border_color|default:'#0f766e' }}{% endif %};
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: {{ template_setting.text_font_size|default:14 }}px;
+  }
+  .report-card-print-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #f8fafc;
+    border-bottom: {% if template_setting.border_style == 'none' %}1px solid #e5e7eb{% else %}3px {{ template_setting.border_style|default:'solid' }} {{ template_setting.border_color|default:'#0f766e' }}{% endif %};
+  }
+  .report-card-print-logo {
+    width: 82px;
+    height: 82px;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: transparent;
+  }
+  .report-card-print-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .report-card-print-title {
+    margin: 0;
+    color: {{ template_setting.accent_color|default:'#0f766e' }};
+    font-size: {{ template_setting.title_font_size|default:30 }}px;
+    font-weight: 800;
+  }
+  .report-card-print-subtitle {
+    margin: 4px 0 0;
+    font-weight: 600;
+  }
+  .report-card-print-body {
+    padding: 20px;
+  }
+  .report-card-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .report-card-meta-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: rgba(248, 250, 252, 0.72);
+  }
+  .report-card-label {
+    display: block;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .report-card-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .report-card-table th,
+  .report-card-table td {
+    border: 1px solid #d1d5db;
+    padding: 10px;
+  }
+  .report-card-table th {
+    background: #f8fafc;
+    color: {{ template_setting.accent_color|default:'#0f766e' }};
+  }
+  .report-card-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .report-card-summary-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    background: #f8fafc;
+  }
+  .report-card-summary-item strong {
+    display: block;
+    font-size: 18px;
+  }
+  .report-card-signatures {
+    display: flex;
+    gap: 24px;
+    margin-top: 56px;
+    text-align: center;
+  }
+  .report-card-signature {
+    flex: 1;
+    border-top: 2px solid #9ca3af;
+    padding-top: 8px;
+    font-weight: 700;
+  }
+  .report-card-signature img {
+    max-height: 46px;
+    display: block;
+    margin: -52px auto 8px;
+  }
+  @media print {
+    .sidebar,
+    .page-header,
+    .report-card-actions,
+    .alert,
+    script {
+      display: none !important;
+    }
+    .main-content {
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .report-card-print {
+      max-width: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+</style>
+
+<div class="report-card-actions d-flex justify-content-between gap-2">
+  <a href="{% url 'result_list' %}" class="btn btn-outline-secondary">Back</a>
+  <button type="button" class="btn btn-primary" onclick="window.print()">Print Report Card</button>
+</div>
+
+<div class="report-card-print">
+  <div class="report-card-print-header">
+    <div class="report-card-print-logo">
+      {% if template_setting.custom_logo %}
+        <img src="{{ template_setting.custom_logo.url }}" alt="School logo">
+      {% elif school_setting.logo %}
+        <img src="{{ school_setting.logo.url }}" alt="School logo">
+      {% else %}
+        <span>Logo</span>
+      {% endif %}
+    </div>
+    <div>
+      <h1 class="report-card-print-title">
+        {% if template_setting.school_title %}{{ template_setting.school_title }}{% else %}{{ school_setting.school_name|default:current_school.name }}{% endif %}
+      </h1>
+      <p class="report-card-print-subtitle">
+        {% if template_setting.school_address %}{{ template_setting.school_address }}{% else %}{{ school_setting.address|default:current_school.address }}{% endif %}
+      </p>
+      <p class="report-card-print-subtitle">Progress Report - {{ first_term.name }}{% if second_term %} and {{ second_term.name }}{% endif %}</p>
+    </div>
+  </div>
+
+  <div class="report-card-print-body">
+    <div class="report-card-meta">
+      <div class="report-card-meta-item">
+        <span class="report-card-label">Student Name</span>
+        {{ student.name }}
+      </div>
+      <div class="report-card-meta-item">
+        <span class="report-card-label">Admission No.</span>
+        {{ student.admission_no }}
+      </div>
+      <div class="report-card-meta-item">
+        <span class="report-card-label">Class</span>
+        {{ student.student_class }} {{ student.section }}
+      </div>
+      <div class="report-card-meta-item">
+        <span class="report-card-label">Roll Number</span>
+        {{ student.roll_no }}
+      </div>
+    </div>
+
+    <table class="report-card-table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th class="text-end">{{ first_term.name }}</th>
+          <th class="text-end">Max</th>
+          {% if second_term %}
+          <th class="text-end">{{ second_term.name }}</th>
+          <th class="text-end">Max</th>
+          {% endif %}
+          <th class="text-end">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in report_rows %}
+          <tr>
+            <td>{{ row.subject_name }}</td>
+            <td class="text-end">{% if row.first %}{{ row.first.marks_obtained }}{% else %}-{% endif %}</td>
+            <td class="text-end">{% if row.first %}{{ row.first.max_marks }}{% else %}-{% endif %}</td>
+            {% if second_term %}
+            <td class="text-end">{% if row.second %}{{ row.second.marks_obtained }}{% else %}-{% endif %}</td>
+            <td class="text-end">{% if row.second %}{{ row.second.max_marks }}{% else %}-{% endif %}</td>
+            {% endif %}
+            <td class="text-end">
+              {% if row.total_marks %}
+                {{ row.total_obtained }}/{{ row.total_marks }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="{% if second_term %}6{% else %}4{% endif %}" class="text-center py-4">No marks added for this student.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="report-card-summary">
+      <div class="report-card-summary-item">
+        <span class="report-card-label">{{ first_term.name }}</span>
+        <strong>{{ first_total_obtained }}/{{ first_total_marks }}</strong>
+      </div>
+      {% if second_term %}
+      <div class="report-card-summary-item">
+        <span class="report-card-label">{{ second_term.name }}</span>
+        <strong>{{ second_total_obtained }}/{{ second_total_marks }}</strong>
+      </div>
+      {% endif %}
+      <div class="report-card-summary-item">
+        <span class="report-card-label">Total</span>
+        <strong>{{ total_obtained }}/{{ total_marks }}</strong>
+      </div>
+      <div class="report-card-summary-item">
+        <span class="report-card-label">Percentage</span>
+        <strong>{{ percentage }}%</strong>
+      </div>
+      <div class="report-card-summary-item">
+        <span class="report-card-label">Result</span>
+        <strong>{{ status }}</strong>
+      </div>
+    </div>
+
+    <div class="report-card-signatures">
+      <div class="report-card-signature">Class Teacher</div>
+      <div class="report-card-signature">
+        {% if template_setting.custom_signature %}
+          <img src="{{ template_setting.custom_signature.url }}" alt="Principal signature">
+        {% elif school_setting.principal_signature %}
+          <img src="{{ school_setting.principal_signature.url }}" alt="Principal signature">
+        {% endif %}
+        Principal
+      </div>
+      <div class="report-card-signature">Parent</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

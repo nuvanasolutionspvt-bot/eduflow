@@ -1,0 +1,2020 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ document_config.title }} Customizer{% endblock %}
+{% block page_title %}{{ document_config.title }} Template{% endblock %}
+{% block page_subtitle %}
+  <p class="text-muted mb-0">{{ document_config.subtitle }}</p>
+{% endblock %}
+{% block content %}
+<style>
+  .customizer-card,
+  .preview-card {
+    background: #fff;
+    border: 1px solid #e6e9f2;
+    border-radius: 1.25rem;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  }
+  .controls-panel {
+    position: sticky;
+    top: 1.5rem;
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+  .section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 0.8rem;
+  }
+  .control-block + .control-block {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e6e9f2;
+  }
+  .form-check-input:checked {
+    background-color: #02066F;
+    border-color: #02066F;
+  }
+  .form-control:focus {
+    border-color: rgba(2, 6, 111, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(2, 6, 111, 0.08);
+  }
+  .preview-stage {
+    padding: 1.5rem;
+    background: linear-gradient(180deg, #fafbff 0%, #f4f6fb 100%);
+    border-radius: 1.25rem;
+  }
+  .document-preview {
+    max-width: 920px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid #d9deec;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(2, 6, 111, 0.08);
+  }
+  .document-preview.double-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9ff;
+    border: 0;
+    box-shadow: none;
+  }
+  .layout-sheet {
+    background: #ffffff;
+    border: 1px solid #d9deec;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 16px 34px rgba(2, 6, 111, 0.08);
+  }
+  .ticket-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #02066F 0%, #1635c4 100%);
+    color: #fff;
+  }
+  .ticket-logo {
+    width: 74px;
+    height: 74px;
+    border-radius: 1rem;
+    background: transparent;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .ticket-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .ticket-logo-placeholder {
+    font-size: 0.78rem;
+    text-align: center;
+    line-height: 1.2;
+    opacity: 0.88;
+  }
+  .school-name {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.15;
+    outline: none;
+    cursor: text;
+  }
+  .school-name:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.4rem;
+    padding: 0.15rem 0.35rem;
+    margin-left: -0.35rem;
+  }
+  .ticket-subtitle {
+    margin: 0.35rem 0 0;
+    font-size: 0.92rem;
+    opacity: 0.9;
+  }
+  .ticket-body {
+    padding: 1.5rem;
+  }
+    .legacy-ticket {
+      width: 100%;
+      max-width: 920px;
+      margin: 0 auto;
+      border: 4px solid #cb0804;
+      padding: 14px;
+      box-sizing: border-box;
+      background: #f5fcc8;
+      border-radius: 0.5rem;
+    }
+  .legacy-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .legacy-header.logo-left .legacy-logo:last-child,
+  .legacy-header.logo-left .legacy-logo-right {
+    display: none;
+  }
+  .legacy-header.logo-right .legacy-logo:first-child,
+  .legacy-header.logo-right .legacy-logo-left {
+    display: none;
+  }
+  .legacy-header.logo-center {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .legacy-header.logo-center .legacy-title-wrap {
+    order: 2;
+    width: 100%;
+  }
+  .legacy-header.logo-center .legacy-logo {
+    order: 1;
+  }
+  .legacy-logo {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .legacy-logo-box {
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    overflow: hidden;
+  }
+  .legacy-logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .legacy-logo-box span {
+    font-size: 0.7rem;
+    text-align: center;
+    color: #6b7280;
+  }
+  .legacy-title-wrap {
+    flex: 1;
+    text-align: center;
+  }
+  .legacy-title-wrap.text-left { text-align: left; }
+  .legacy-title-wrap.text-right { text-align: right; }
+  .legacy-title-wrap h1 {
+    margin: 0;
+    font-size: 38px;
+    color: #cb0804;
+    outline: none;
+  }
+  .legacy-title-wrap p {
+    margin: 5px 0;
+    font-weight: 600;
+    font-size: 18px;
+    color: #000080;
+    outline: none;
+  }
+  .legacy-subtitle {
+    text-align: center;
+    font-size: 20px;
+    color: #cb0804;
+    font-weight: bold;
+    margin: 8px 0 0;
+  }
+  .legacy-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-top: 20px;
+  }
+  .legacy-content.image-left { flex-direction: row-reverse; }
+  .legacy-content.image-top {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+  .legacy-content.image-top .legacy-details { width: 100%; }
+  .legacy-content.image-bottom {
+    flex-direction: column;
+    align-items: center;
+  }
+  .legacy-content.image-bottom .legacy-details { width: 100%; }
+  .legacy-details {
+    font-size: 18px;
+    color: #000080;
+    font-weight: bold;
+    flex: 1;
+  }
+  .legacy-details p { margin: 12px 0; }
+  .legacy-details p span { text-decoration: underline; }
+  .legacy-highlight { color: #d00000; }
+  .legacy-photo-box {
+    width: 110px;
+    height: 150px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .legacy-photo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .legacy-sign {
+    text-align: right;
+    margin-top: 18px;
+  }
+  .legacy-sign.image-left { text-align: left; }
+  .legacy-sign img {
+    width: 150px;
+    max-width: 100%;
+  }
+  .ticket-section + .ticket-section {
+    margin-top: 1rem;
+  }
+  .ticket-section {
+    border: 1px solid #e6e9f2;
+    border-radius: 0.9rem;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .ticket-section-title {
+    padding: 0.75rem 1rem;
+    background: #eef0ff;
+    color: #02066F;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .ticket-section-body {
+    padding: 1rem;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem 1rem;
+  }
+  .info-item {
+    padding: 0.75rem 0.85rem;
+    border-radius: 0.8rem;
+    background: #f8f9fd;
+    border: 1px solid #edf0f7;
+  }
+  .info-label {
+    display: block;
+    color: #6b7280;
+    font-size: 0.78rem;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+  }
+  .info-value {
+    font-weight: 600;
+  }
+  .subject-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .subject-table th,
+  .subject-table td {
+    padding: 0.8rem;
+    border-bottom: 1px solid #edf0f7;
+    font-size: 0.92rem;
+    text-align: left;
+  }
+  .subject-table th {
+    color: #6b7280;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .report-card-sheet {
+    background: #ffffff;
+    border: 3px solid #0f766e;
+    border-radius: 0.75rem;
+    color: #111827;
+    overflow: hidden;
+  }
+  .report-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: #f0fdfa;
+    border-bottom: 3px solid #0f766e;
+  }
+  .report-card-logo {
+    width: 76px;
+    height: 76px;
+    border: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .report-card-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .report-card-title {
+    margin: 0;
+    color: #0f766e;
+    font-size: 30px;
+    font-weight: 800;
+  }
+  .report-card-subtitle {
+    margin: 0.25rem 0 0;
+    font-weight: 600;
+  }
+  .report-card-body {
+    padding: 1.25rem;
+  }
+  .report-card-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .report-card-meta-item {
+    border: 1px solid #d7eee9;
+    border-radius: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    background: #fbfffe;
+  }
+  .report-card-label {
+    display: block;
+    color: #6b7280;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .report-card-marks {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.75rem;
+  }
+  .report-card-marks th,
+  .report-card-marks td {
+    border: 1px solid #d7eee9;
+    padding: 0.7rem;
+  }
+  .report-card-marks th {
+    background: #ecfdf5;
+    color: #0f766e;
+  }
+  .report-card-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .report-card-summary div {
+    border-radius: 0.5rem;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 700;
+  }
+  .report-card-signatures {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+  .report-card-signature {
+    flex: 1;
+    border-top: 2px solid #9ca3af;
+    padding-top: 0.5rem;
+    font-weight: 700;
+  }
+  .signature-box {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: center;
+  }
+  .signature-item {
+    flex: 1;
+    padding-top: 2.8rem;
+    border-top: 2px solid #d3d8e8;
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .instructions-list {
+    margin: 0;
+    padding-left: 1rem;
+    color: #374151;
+  }
+  .instructions-list li + li {
+    margin-top: 0.45rem;
+  }
+  .document-template-frame,
+  .nirgam-template-frame {
+    width: 100%;
+    height: 1200px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    background: #ffffff;
+  }
+  @media (max-width: 991.98px) {
+    .document-preview.double-layout { grid-template-columns: 1fr; }
+    .controls-panel {
+      position: static;
+      max-height: none;
+      overflow-y: visible;
+    }
+  }
+  @media (max-width: 575.98px) {
+    .info-grid { grid-template-columns: 1fr; }
+    .signature-box { flex-direction: column; }
+  }
+</style>
+
+<div class="row g-4 align-items-start">
+  <div class="col-lg-4">
+    <div class="customizer-card controls-panel p-4">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+          <h2 class="h5 mb-1">{{ document_config.title }} Controls</h2>
+          <p class="text-muted mb-0">Change layout, visibility, logo, and preview text.</p>
+        </div>
+
+        {% if document_type == 'nirgam' %}
+        <div class="control-block">
+          <div class="section-title">Template Language</div>
+          <label class="form-label" for="nirgamTemplateLanguage">Nirgam Template</label>
+          <select class="form-select" id="nirgamTemplateLanguage">
+            <option value="mr" data-preview-url="{{ nirgam_preview_urls.mr|default:'' }}">Marathi Template</option>
+            <option value="en" data-preview-url="{{ nirgam_preview_urls.en|default:'' }}" selected>English Template</option>
+          </select>
+          {% if nirgam_preview_student %}
+          <div class="small text-muted mt-2">
+            Previewing with {{ nirgam_preview_student.name }}.
+          </div>
+          {% else %}
+          <div class="small text-danger mt-2">
+            Add an active student to preview the real Nirgam template.
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Title Text</div>
+          <label class="form-label" for="nirgamTitlePrimary">Register Title</label>
+          <input
+            class="form-control mb-3"
+            type="text"
+            id="nirgamTitlePrimary"
+            name="school_title"
+            value="{% if saved_setting and saved_setting.school_title %}{{ saved_setting.school_title }}{% else %}Student Admission Register (As per Govt. Rules){% endif %}">
+
+          <label class="form-label" for="nirgamTitleSecondary">Leaving Register Title</label>
+          <input
+            class="form-control"
+            type="text"
+            id="nirgamTitleSecondary"
+            name="school_address"
+            value="{% if saved_setting and saved_setting.school_address %}{{ saved_setting.school_address }}{% else %}Student Admission Leaving Register{% endif %}">
+        </div>
+        {% endif %}
+
+        {% if document_type == 'hall-ticket' %}
+        <div class="control-block">
+          <div class="section-title">Design Controls</div>
+          <label class="form-label" for="hallTicketSchoolTitle">School Title</label>
+          <input class="form-control mb-3" type="text" id="hallTicketSchoolTitle" name="school_title" value="{% if saved_setting and saved_setting.school_title %}{{ saved_setting.school_title }}{% else %}{{ preview_school.school_name|default:'School Name' }}{% endif %}">
+
+          <label class="form-label" for="hallTicketSchoolAddress">School Address</label>
+          <textarea class="form-control mb-3" id="hallTicketSchoolAddress" name="school_address" rows="2">{% if saved_setting and saved_setting.school_address %}{{ saved_setting.school_address }}{% else %}{{ preview_school.address|default:'' }}{% endif %}</textarea>
+
+          <label class="form-label" for="accentColor">Title Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="accentColor" name="accent_color" value="{{ saved_setting.accent_color|default:'#cb0804' }}">
+
+          <label class="form-label" for="backgroundColor">Background Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="backgroundColor" name="background_color" value="{{ saved_setting.background_color|default:'#f5fcc8' }}">
+
+          <label class="form-label" for="textColor">Text Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="textColor" name="text_color" value="{{ saved_setting.text_color|default:'#000080' }}">
+
+          <label class="form-label" for="borderStyle">Border Color</label>
+          <select class="form-select mb-3" id="borderStyle" name="border_style">
+            <option value="accent" {% if not saved_setting or saved_setting.border_style == 'accent' %}selected{% endif %}>Custom Color</option>
+            <option value="none" {% if saved_setting.border_style == 'none' %}selected{% endif %}>None</option>
+          </select>
+
+          <label class="form-label" for="borderColor">Border Custom Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="borderColor" name="border_color" value="{{ saved_setting.border_color|default:'#cb0804' }}">
+
+          <label class="form-label" for="titleFontSize">Title Font Size</label>
+          <input class="form-control mb-3" type="number" id="titleFontSize" name="title_font_size" min="20" max="72" value="{{ saved_setting.title_font_size|default:38 }}">
+
+          <label class="form-label" for="textFontSize">Text Size</label>
+          <input class="form-control mb-3" type="number" id="textFontSize" name="text_font_size" min="12" max="36" value="{{ saved_setting.text_font_size|default:18 }}">
+
+          <label class="form-label" for="logoPosition">Logo Position</label>
+          <select class="form-select mb-3" id="logoPosition" name="logo_position">
+            <option value="both" {% if not saved_setting or saved_setting.logo_position == 'both' %}selected{% endif %}>Both Sides</option>
+            <option value="left" {% if saved_setting.logo_position == 'left' %}selected{% endif %}>Left Only</option>
+            <option value="right" {% if saved_setting.logo_position == 'right' %}selected{% endif %}>Right Only</option>
+            <option value="center" {% if saved_setting.logo_position == 'center' %}selected{% endif %}>Centered</option>
+          </select>
+
+          <label class="form-label" for="textPosition">School Text Position</label>
+          <select class="form-select mb-3" id="textPosition" name="text_position">
+            <option value="center" {% if not saved_setting or saved_setting.text_position == 'center' %}selected{% endif %}>Center</option>
+            <option value="left" {% if saved_setting.text_position == 'left' %}selected{% endif %}>Left</option>
+            <option value="right" {% if saved_setting.text_position == 'right' %}selected{% endif %}>Right</option>
+          </select>
+
+          <label class="form-label" for="imagePosition">Student Image Position</label>
+          <select class="form-select" id="imagePosition" name="image_position">
+            <option value="right" {% if not saved_setting or saved_setting.image_position == 'right' %}selected{% endif %}>Right</option>
+            <option value="left" {% if saved_setting.image_position == 'left' %}selected{% endif %}>Left</option>
+            <option value="top" {% if saved_setting.image_position == 'top' %}selected{% endif %}>Top</option>
+            <option value="bottom" {% if saved_setting.image_position == 'bottom' %}selected{% endif %}>Bottom</option>
+          </select>
+        </div>
+        {% endif %}
+
+        {% if document_type == 'id-card' %}
+        <div class="control-block">
+          <div class="section-title">Live Preview</div>
+          {% if id_card_preview_student %}
+          <p class="text-muted mb-0">Previewing primary id card bulk.html with class {{ id_card_preview_student.student_class }}{% if id_card_preview_student.section %} - {{ id_card_preview_student.section }}{% endif %}.</p>
+          {% else %}
+          <p class="text-danger mb-0">Add an active student to preview the real ID card template.</p>
+          {% endif %}
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Images</div>
+          <label class="form-label" for="idCardHeaderImageUpload">Header Image</label>
+          <input class="form-control mb-3" type="file" id="idCardHeaderImageUpload" accept="image/*">
+          <div class="small text-muted mb-3">Header image size: 650 x 300 px</div>
+
+          <label class="form-label" for="idCardFooterImageUpload">Footer Image</label>
+          <input class="form-control" type="file" id="idCardFooterImageUpload" accept="image/*">
+          <div class="small text-muted mt-2">Footer image size: 650 x 100 px. Larger or different sizes are not accepted.</div>
+
+          <label class="form-label mt-3" for="idCardWatermarkUpload">Watermark Logo</label>
+          <input class="form-control" type="file" id="idCardWatermarkUpload" accept="image/*">
+
+          <label class="form-label mt-3" for="idCardSignatureUpload">Save Principal Sign</label>
+          <input class="form-control" type="file" id="idCardSignatureUpload" name="custom_signature" accept="image/*">
+          {% if saved_setting and saved_setting.custom_signature %}
+          <div class="small text-muted mt-2">Saved sign: {{ saved_setting.custom_signature.name }}</div>
+          {% elif preview_school.principal_signature %}
+          <div class="small text-muted mt-2">Using school principal signature by default.</div>
+          {% endif %}
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Design</div>
+          <div class="small text-muted mb-3">These options apply only when no header image or footer image is uploaded.</div>
+
+          <label class="form-label" for="idCardTitleText">School Title Text</label>
+          <input class="form-control mb-3" type="text" id="idCardTitleText" name="school_title" value="{% if saved_setting and saved_setting.school_title %}{{ saved_setting.school_title }}{% else %}{{ preview_school.school_name|default:'School Name' }}{% endif %}">
+
+          <label class="form-label" for="idCardSubtitleText">Subheading Text</label>
+          <input class="form-control mb-3" type="text" id="idCardSubtitleText" name="school_address" value="{% if saved_setting and saved_setting.school_address %}{{ saved_setting.school_address }}{% else %}Official School Card{% endif %}">
+
+          <label class="form-label" for="idCardLogoUpload">Logo Upload</label>
+          <input class="form-control mb-3" type="file" id="idCardLogoUpload" name="custom_logo" accept="image/*">
+          {% if saved_setting and saved_setting.custom_logo %}
+          <div class="small text-muted mb-3">Saved logo: {{ saved_setting.custom_logo.name }}</div>
+          {% endif %}
+
+          <label class="form-label" for="idCardTextAlign">Logo Position</label>
+          <select class="form-select mb-3" id="idCardTextAlign" name="logo_position">
+            <option value="left" {% if not saved_setting or saved_setting.logo_position != 'right' %}selected{% endif %}>Left</option>
+            <option value="right" {% if saved_setting.logo_position == 'right' %}selected{% endif %}>Right</option>
+          </select>
+
+          <label class="form-label" for="idCardTitleFontSize">Title Font Size</label>
+          <input class="form-control mb-3" type="number" id="idCardTitleFontSize" name="title_font_size" min="16" max="60" value="{{ saved_setting.title_font_size|default:38 }}">
+
+          <label class="form-label" for="idCardSubtitleFontSize">Subtitle Font Size</label>
+          <input class="form-control mb-3" type="number" id="idCardSubtitleFontSize" name="text_font_size" min="10" max="40" value="{{ saved_setting.text_font_size|default:22 }}">
+
+          <label class="form-label" for="idCardHeaderColor">Header Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="idCardHeaderColor" name="accent_color" value="{{ saved_setting.accent_color|default:'#274e13' }}">
+
+          <label class="form-label" for="idCardFooterColor">Footer Color</label>
+          <input class="form-control form-control-color" type="color" id="idCardFooterColor" name="background_color" value="{{ saved_setting.background_color|default:'#274e13' }}">
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Data Controls</div>
+
+          <label class="form-label" for="idCardDataLineSpacing">Line Spacing</label>
+          <input class="form-control mb-3" type="number" id="idCardDataLineSpacing" min="0" max="120" value="24">
+
+          <label class="form-label" for="idCardDataFontSize">Data Font Size</label>
+          <input class="form-control mb-3" type="number" id="idCardDataFontSize" min="12" max="56" value="32">
+
+          <label class="form-label" for="idCardDataFontFamily">Data Font Name</label>
+          <select class="form-select mb-3" id="idCardDataFontFamily">
+            <option value="Arial" selected>Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Tahoma">Tahoma</option>
+            <option value="Georgia">Georgia</option>
+            <option value="'Times New Roman'">Times New Roman</option>
+          </select>
+
+          <label class="form-label" for="idCardLabelColor">Field Label Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="idCardLabelColor" name="text_color" value="{{ saved_setting.text_color|default:'#000080' }}">
+
+          <label class="form-label" for="idCardValueColor">Field Value Color</label>
+          <input class="form-control form-control-color" type="color" id="idCardValueColor" name="border_color" value="{{ saved_setting.border_color|default:'#000000' }}">
+        </div>
+
+        <div class="control-block">
+          <button type="submit" class="btn btn-primary w-100">Save ID Card Customization</button>
+        </div>
+        {% endif %}
+
+        {% if document_type == 'bonafide' %}
+        <div class="control-block">
+          <div class="section-title">Live Preview</div>
+          {% if bonafide_preview_student %}
+          <p class="text-muted mb-0">Previewing bona.html with {{ bonafide_preview_student.name }}.</p>
+          {% else %}
+          <p class="text-danger mb-0">Add an active student to preview the real Bonafide template.</p>
+          {% endif %}
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">School Header</div>
+          <label class="form-label" for="bonafideSchoolTitleInput">School Title</label>
+          <input
+            class="form-control mb-3"
+            type="text"
+            id="bonafideSchoolTitleInput"
+            name="school_title"
+            value="{% if saved_setting and saved_setting.school_title %}{{ saved_setting.school_title }}{% else %}{{ preview_school.school_name|default:'School Name' }}{% endif %}">
+
+          <label class="form-label" for="bonafideTitleFontSize">School Title Font Size</label>
+          <input class="form-control mb-3" type="number" id="bonafideTitleFontSize" name="title_font_size" min="18" max="56" value="{{ saved_setting.title_font_size|default:30 }}">
+
+          <label class="form-label" for="bonafideSchoolAddressInput">School Address</label>
+          <textarea class="form-control mb-3" id="bonafideSchoolAddressInput" name="school_address" rows="2">{% if saved_setting and saved_setting.school_address %}{{ saved_setting.school_address }}{% else %}{{ preview_school.address|default:'' }}{% endif %}</textarea>
+
+          <label class="form-label" for="bonafideAddressFontSize">Address Font Size</label>
+          <input class="form-control" type="number" id="bonafideAddressFontSize" name="text_font_size" min="10" max="28" value="{{ saved_setting.text_font_size|default:14 }}">
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Logo</div>
+          <label class="form-label" for="bonafideLogoUpload">Upload Logo</label>
+          <input class="form-control mb-3" type="file" id="bonafideLogoUpload" name="custom_logo" accept="image/*">
+          {% if saved_setting.custom_logo %}
+          <div class="small text-muted mb-3">Saved logo: {{ saved_setting.custom_logo.name }}</div>
+          {% endif %}
+
+          <label class="form-label" for="bonafideLogoPosition">Logo Position</label>
+          <select class="form-select" id="bonafideLogoPosition" name="logo_position">
+            <option value="left" {% if not saved_setting or saved_setting.logo_position == 'left' %}selected{% endif %}>Left</option>
+            <option value="right" {% if saved_setting.logo_position == 'right' %}selected{% endif %}>Right</option>
+            <option value="none" {% if saved_setting.logo_position == 'none' %}selected{% endif %}>None</option>
+          </select>
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Student Photo</div>
+          <label class="form-label" for="bonafidePhotoRequired">Student Photo Required</label>
+          <select class="form-select" id="bonafidePhotoRequired" name="show_student_photo">
+            <option value="yes" {% if not saved_setting or saved_setting.show_student_photo %}selected{% endif %}>Yes</option>
+            <option value="no" {% if saved_setting and not saved_setting.show_student_photo %}selected{% endif %}>No</option>
+          </select>
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Border</div>
+          <label class="form-label" for="bonafideBorderStyle">Border Option</label>
+          <select class="form-select mb-3" id="bonafideBorderStyle" name="border_style">
+            <option value="double" {% if not saved_setting or saved_setting.border_style == 'double' or saved_setting.border_style == 'accent' %}selected{% endif %}>Double</option>
+            <option value="solid" {% if saved_setting.border_style == 'solid' %}selected{% endif %}>Solid</option>
+            <option value="dashed" {% if saved_setting.border_style == 'dashed' %}selected{% endif %}>Dashed</option>
+            <option value="dotted" {% if saved_setting.border_style == 'dotted' %}selected{% endif %}>Dotted</option>
+            <option value="none" {% if saved_setting.border_style == 'none' %}selected{% endif %}>None</option>
+          </select>
+
+          <label class="form-label" for="bonafideBorderColor">Border Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="bonafideBorderColor" name="border_color" value="{{ saved_setting.border_color|default:'#111111' }}">
+
+          <label class="form-label" for="bonafideBorderWidth">Border Width</label>
+          <input class="form-control" type="number" id="bonafideBorderWidth" name="border_width" min="1" max="12" value="{{ saved_setting.border_width|default:4 }}">
+        </div>
+
+        <div class="control-block">
+          <button type="submit" class="btn btn-primary w-100">Save Bonafide Customization</button>
+        </div>
+        {% endif %}
+
+        {% if document_type == 'nirgam' %}
+        <div class="control-block">
+          <button type="submit" class="btn btn-primary w-100">Save Nirgam Customization</button>
+        </div>
+        {% endif %}
+
+        {% if document_type == 'report-card' %}
+        <div class="control-block">
+          <div class="section-title">Design Controls</div>
+          <label class="form-label" for="reportCardSchoolTitle">School Title</label>
+          <input class="form-control mb-3" type="text" id="reportCardSchoolTitle" name="school_title" value="{% if saved_setting and saved_setting.school_title %}{{ saved_setting.school_title }}{% else %}{{ preview_school.school_name|default:'School Name' }}{% endif %}">
+
+          <label class="form-label" for="reportCardSchoolAddress">School Address</label>
+          <textarea class="form-control mb-3" id="reportCardSchoolAddress" name="school_address" rows="2">{% if saved_setting and saved_setting.school_address %}{{ saved_setting.school_address }}{% else %}{{ preview_school.address|default:'' }}{% endif %}</textarea>
+
+          <label class="form-label" for="reportCardAccentColor">Title Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="reportCardAccentColor" name="accent_color" value="{{ saved_setting.accent_color|default:'#0f766e' }}">
+
+          <label class="form-label" for="reportCardBackgroundColor">Background Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="reportCardBackgroundColor" name="background_color" value="{{ saved_setting.background_color|default:'#ffffff' }}">
+
+          <label class="form-label" for="reportCardTextColor">Text Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="reportCardTextColor" name="text_color" value="{{ saved_setting.text_color|default:'#111827' }}">
+
+          <label class="form-label" for="reportCardBorderStyle">Border Style</label>
+          <select class="form-select mb-3" id="reportCardBorderStyle" name="border_style">
+            <option value="solid" {% if not saved_setting or saved_setting.border_style == 'solid' %}selected{% endif %}>Solid</option>
+            <option value="double" {% if saved_setting.border_style == 'double' %}selected{% endif %}>Double</option>
+            <option value="dashed" {% if saved_setting.border_style == 'dashed' %}selected{% endif %}>Dashed</option>
+            <option value="dotted" {% if saved_setting.border_style == 'dotted' %}selected{% endif %}>Dotted</option>
+            <option value="none" {% if saved_setting.border_style == 'none' %}selected{% endif %}>None</option>
+          </select>
+
+          <label class="form-label" for="reportCardBorderColor">Border Color</label>
+          <input class="form-control form-control-color mb-3" type="color" id="reportCardBorderColor" name="border_color" value="{{ saved_setting.border_color|default:'#0f766e' }}">
+
+          <label class="form-label" for="reportCardTitleFontSize">Title Font Size</label>
+          <input class="form-control mb-3" type="number" id="reportCardTitleFontSize" name="title_font_size" min="18" max="56" value="{{ saved_setting.title_font_size|default:30 }}">
+
+          <label class="form-label" for="reportCardTextFontSize">Text Size</label>
+          <input class="form-control" type="number" id="reportCardTextFontSize" name="text_font_size" min="10" max="28" value="{{ saved_setting.text_font_size|default:14 }}">
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Section Visibility</div>
+          <div class="form-check mb-2">
+            <input class="form-check-input section-toggle" type="checkbox" data-target="student-section" id="toggleStudentInfo" checked>
+            <label class="form-check-label" for="toggleStudentInfo">Student Details</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input section-toggle" type="checkbox" data-target="subjects-section" id="toggleSubjects" checked>
+            <label class="form-check-label" for="toggleSubjects">Marks Table</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input section-toggle" type="checkbox" data-target="signature-section" id="toggleSignature" checked>
+            <label class="form-check-label" for="toggleSignature">Signatures</label>
+          </div>
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Images</div>
+          <label class="form-label" for="reportCardLogoUpload">Save Report Card Logo</label>
+          <input class="form-control" type="file" id="reportCardLogoUpload" name="custom_logo" accept="image/*">
+          {% if saved_setting.custom_logo %}
+          <div class="small text-muted mt-2">Saved logo: {{ saved_setting.custom_logo.name }}</div>
+          {% endif %}
+
+          <label class="form-label mt-3" for="reportCardSignatureUpload">Save Principal Signature</label>
+          <input class="form-control" type="file" id="reportCardSignatureUpload" name="custom_signature" accept="image/*">
+          {% if saved_setting.custom_signature %}
+          <div class="small text-muted mt-2">Saved signature: {{ saved_setting.custom_signature.name }}</div>
+          {% endif %}
+        </div>
+
+        <div class="control-block">
+          <button type="submit" class="btn btn-primary w-100">Save Report Card Customization</button>
+        </div>
+        {% endif %}
+
+        {% if document_type != 'nirgam' and document_type != 'bonafide' and document_type != 'id-card' and document_type != 'report-card' %}
+        <div class="control-block">
+          <div class="section-title">Section Visibility</div>
+          <div class="form-check mb-2">
+            <input class="form-check-input section-toggle" type="checkbox" data-target="student-section" id="toggleStudentInfo" checked>
+            <label class="form-check-label" for="toggleStudentInfo">Student Info</label>
+          </div>
+          {% if document_type == 'hall-ticket' %}
+          <div class="form-check mb-2">
+            <input class="form-check-input section-toggle" type="checkbox" data-target="signature-section" id="toggleSignature" checked>
+            <label class="form-check-label" for="toggleSignature">Signature</label>
+          </div>
+          {% else %}
+          <div class="form-check mb-2">
+            <input class="form-check-input section-toggle" type="checkbox" data-target="subjects-section" id="toggleSubjects" {% if document_config.show_subjects %}checked{% endif %}>
+            <label class="form-check-label" for="toggleSubjects">{{ document_config.details_section_title }}</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input section-toggle" type="checkbox" data-target="signature-section" id="toggleSignature" checked>
+            <label class="form-check-label" for="toggleSignature">Signature</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input section-toggle" type="checkbox" data-target="instructions-section" id="toggleInstructions" {% if document_config.show_instructions %}checked{% endif %}>
+            <label class="form-check-label" for="toggleInstructions">Instructions</label>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Logo Upload</div>
+          <label class="form-label" for="logoUpload">Preview Logo</label>
+          <input class="form-control" type="file" id="logoUpload" accept="image/*">
+          {% if document_type == 'hall-ticket' %}
+          <label class="form-label mt-3" for="signatureUpload">Save Hall Ticket Signature</label>
+          <input class="form-control" type="file" id="signatureUpload" name="custom_signature" accept="image/*">
+          {% if saved_setting.custom_signature %}
+          <div class="small text-muted mt-2">Saved signature: {{ saved_setting.custom_signature.name }}</div>
+          {% endif %}
+          {% endif %}
+          {% if document_type == 'id-card' or document_type == 'hall-ticket' %}
+          <label class="form-label mt-3" for="customLogo">Save Custom {% if document_type == 'id-card' %}ID Card{% else %}Hall Ticket{% endif %} Logo</label>
+          <input class="form-control" type="file" id="customLogo" name="custom_logo" accept="image/*">
+          {% if saved_setting.custom_logo %}
+          <div class="small text-muted mt-2">Saved logo: {{ saved_setting.custom_logo.name }}</div>
+          {% endif %}
+          {% endif %}
+        </div>
+
+        <div class="control-block">
+          <div class="section-title">Live Editing</div>
+          <p class="text-muted mb-0">Click the school name in the preview and edit it directly.</p>
+        </div>
+        {% endif %}
+
+        {% if document_type == 'hall-ticket' %}
+        <div class="control-block">
+          <button type="submit" class="btn btn-primary w-100">Save Hall Ticket Customization</button>
+        </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="preview-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h5 mb-1">Live Preview</h2>
+          <p class="text-muted mb-0">Changes apply instantly for {{ document_config.title|lower }}.</p>
+        </div>
+      </div>
+
+      <div class="preview-stage">
+        {% if document_type == 'id-card' %}
+          {% if id_card_preview_student %}
+          <iframe
+            class="document-template-frame"
+            id="idCardTemplateFrame"
+            src="{{ id_card_preview_url }}"
+            title="ID Card Bulk Template Preview"
+            loading="lazy"></iframe>
+          {% else %}
+          <div class="alert alert-warning mb-0">
+            No active student is available for ID card live preview.
+          </div>
+          {% endif %}
+        {% elif document_type == 'bonafide' %}
+          {% if bonafide_preview_student %}
+          <iframe
+            class="document-template-frame"
+            id="bonafideTemplateFrame"
+            src="{{ bonafide_preview_url }}"
+            title="Bonafide Template Preview"
+            loading="lazy"></iframe>
+          {% else %}
+          <div class="alert alert-warning mb-0">
+            No active student is available for Bonafide live preview.
+          </div>
+          {% endif %}
+        {% elif document_type == 'nirgam' %}
+          {% if nirgam_preview_student %}
+          <iframe
+            class="nirgam-template-frame"
+            id="nirgamTemplateFrame"
+            src="{{ nirgam_preview_urls.en }}"
+            title="Nirgam Template Preview"
+            loading="lazy"></iframe>
+          {% else %}
+          <div class="alert alert-warning mb-0">
+            No active student is available for Nirgam live preview.
+          </div>
+          {% endif %}
+        {% else %}
+        <div class="document-preview" id="previewLayout">
+          <div class="layout-sheet">
+            {% if document_type == 'report-card' %}
+            <div
+              class="report-card-sheet"
+              id="reportCardSheet"
+              style="{% if saved_setting.border_style == 'none' %}border: none;{% else %}border-color: {{ saved_setting.border_color|default:'#0f766e' }}; border-style: {{ saved_setting.border_style|default:'solid' }};{% endif %} background: {{ saved_setting.background_color|default:'#ffffff' }}; color: {{ saved_setting.text_color|default:'#111827' }}; font-size: {{ saved_setting.text_font_size|default:14 }}px;">
+              <div class="report-card-header" id="reportCardHeader" style="border-color: {{ saved_setting.border_color|default:'#0f766e' }};">
+                <div class="report-card-logo">
+                  <span id="reportCardLogoPlaceholder" {% if saved_setting.custom_logo or preview_school.logo %}style="display:none;"{% endif %}>Logo</span>
+                  <img
+                    id="reportCardLogoPreview"
+                    alt="Report card logo preview"
+                    data-default-src="{% if saved_setting.custom_logo %}{{ saved_setting.custom_logo.url }}{% elif preview_school.logo %}{{ preview_school.logo.url }}{% endif %}"
+                    src="{% if saved_setting.custom_logo %}{{ saved_setting.custom_logo.url }}{% elif preview_school.logo %}{{ preview_school.logo.url }}{% endif %}"
+                    {% if not saved_setting.custom_logo and not preview_school.logo %}style="display:none;"{% endif %}
+                  >
+                </div>
+                <div>
+                  <h1 class="report-card-title" id="reportCardTitlePreview" style="color: {{ saved_setting.accent_color|default:'#0f766e' }}; font-size: {{ saved_setting.title_font_size|default:30 }}px;">{% if saved_setting and saved_setting.school_title %}{{ saved_setting.school_title }}{% else %}{{ preview_school.school_name|default:'School Name' }}{% endif %}</h1>
+                  <p class="report-card-subtitle" id="reportCardAddressPreview">{% if saved_setting and saved_setting.school_address %}{{ saved_setting.school_address }}{% else %}{{ preview_school.address|default:'' }}{% endif %}</p>
+                  <p class="report-card-subtitle">{{ document_config.header_subtitle }}</p>
+                </div>
+              </div>
+
+              <div class="report-card-body">
+                <section id="student-section">
+                  <div class="report-card-meta">
+                    <div class="report-card-meta-item">
+                      <span class="report-card-label">Student Name</span>
+                      Aarav Sharma
+                    </div>
+                    <div class="report-card-meta-item">
+                      <span class="report-card-label">Admission No.</span>
+                      EDU-2026-0018
+                    </div>
+                    <div class="report-card-meta-item">
+                      <span class="report-card-label">Class</span>
+                      10 - A
+                    </div>
+                    <div class="report-card-meta-item">
+                      <span class="report-card-label">Roll Number</span>
+                      18
+                    </div>
+                  </div>
+                </section>
+
+                <section id="subjects-section">
+                  <table class="report-card-marks">
+                    <thead>
+                      <tr>
+                        <th>Subject</th>
+                        <th class="text-end">First Term</th>
+                        <th class="text-end">Max</th>
+                        <th class="text-end">Second Term</th>
+                        <th class="text-end">Max</th>
+                        <th class="text-end">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>English</td>
+                        <td class="text-end">82</td>
+                        <td class="text-end">100</td>
+                        <td class="text-end">86</td>
+                        <td class="text-end">100</td>
+                        <td class="text-end">168 / 200</td>
+                      </tr>
+                      <tr>
+                        <td>Mathematics</td>
+                        <td class="text-end">91</td>
+                        <td class="text-end">100</td>
+                        <td class="text-end">88</td>
+                        <td class="text-end">100</td>
+                        <td class="text-end">179 / 200</td>
+                      </tr>
+                      <tr>
+                        <td>Science</td>
+                        <td class="text-end">88</td>
+                        <td class="text-end">100</td>
+                        <td class="text-end">90</td>
+                        <td class="text-end">100</td>
+                        <td class="text-end">178 / 200</td>
+                      </tr>
+                      <tr>
+                        <td>Social Studies</td>
+                        <td class="text-end">79</td>
+                        <td class="text-end">100</td>
+                        <td class="text-end">81</td>
+                        <td class="text-end">100</td>
+                        <td class="text-end">160 / 200</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="report-card-summary">
+                    <div>First Term: 340 / 400</div>
+                    <div>Second Term: 345 / 400</div>
+                    <div>Total: 685 / 800</div>
+                    <div>Percentage: 85.63%</div>
+                    <div>Result: Pass</div>
+                  </div>
+                </section>
+
+                <section class="report-card-signatures" id="signature-section">
+                  <div class="report-card-signature">Class Teacher</div>
+                  <div class="report-card-signature">
+                    {% if saved_setting.custom_signature %}
+                    <img
+                      id="reportCardSignaturePreview"
+                      src="{{ saved_setting.custom_signature.url }}"
+                      data-default-src="{{ saved_setting.custom_signature.url }}"
+                      alt="Signature preview"
+                      style="max-height:42px;display:block;margin:0 auto 0.35rem;"
+                    >
+                    {% elif preview_school.principal_signature %}
+                    <img
+                      id="reportCardSignaturePreview"
+                      src="{{ preview_school.principal_signature.url }}"
+                      data-default-src="{{ preview_school.principal_signature.url }}"
+                      alt="Signature preview"
+                      style="max-height:42px;display:block;margin:0 auto 0.35rem;"
+                    >
+                    {% else %}
+                    <img id="reportCardSignaturePreview" alt="Signature preview" data-default-src="" style="display:none;max-height:42px;margin:0 auto 0.35rem;">
+                    {% endif %}
+                    Principal
+                  </div>
+                  <div class="report-card-signature">Parent</div>
+                </section>
+              </div>
+            </div>
+            {% elif document_type == 'hall-ticket' %}
+            <div class="legacy-ticket" id="hallTicketSheet" style="{% if saved_setting.border_style == 'none' %}border: none;{% else %}border-color: {{ saved_setting.border_color|default:'#cb0804' }};{% endif %} background: {{ saved_setting.background_color|default:'#f5fcc8' }};">
+              <div class="legacy-header" id="header">
+                <div class="legacy-logo-box legacy-logo legacy-logo-left">
+                  <span id="logoPlaceholder" {% if saved_setting.custom_logo or preview_school.logo %}style="display:none;"{% endif %}>School Logo</span>
+                  <img
+                    id="logoPreview"
+                    alt="School logo preview"
+                    data-default-src="{% if saved_setting.custom_logo %}{{ saved_setting.custom_logo.url }}{% elif preview_school.logo %}{{ preview_school.logo.url }}{% endif %}"
+                    src="{% if saved_setting.custom_logo %}{{ saved_setting.custom_logo.url }}{% elif preview_school.logo %}{{ preview_school.logo.url }}{% endif %}"
+                    {% if not saved_setting.custom_logo and not preview_school.logo %}style="display:none;"{% endif %}
+                  >
+                </div>
+                <div class="legacy-title-wrap" id="schoolTextWrap">
+                  <h1 class="school-name" id="schoolName" contenteditable="true" style="color: {{ saved_setting.accent_color|default:'#cb0804' }}; font-size: {{ saved_setting.title_font_size|default:38 }}px;">{% if saved_setting and saved_setting.school_title %}{{ saved_setting.school_title }}{% else %}{{ preview_school.school_name|default:'School Name' }}{% endif %}</h1>
+                  <p contenteditable="true" id="schoolAddressPreview" style="color: {{ saved_setting.text_color|default:'#000080' }}; font-size: {{ saved_setting.text_font_size|default:18 }}px;">{% if saved_setting and saved_setting.school_address %}{{ saved_setting.school_address }}{% else %}{{ preview_school.address|default:'' }}{% endif %}</p>
+                </div>
+                <div class="legacy-logo-box legacy-logo legacy-logo-right">
+                  <span id="logoPlaceholderRight" {% if saved_setting.custom_logo or preview_school.logo %}style="display:none;"{% endif %}>School Logo</span>
+                  <img
+                    id="logoPreviewRight"
+                    alt="School logo preview right"
+                    data-default-src="{% if saved_setting.custom_logo %}{{ saved_setting.custom_logo.url }}{% elif preview_school.logo %}{{ preview_school.logo.url }}{% endif %}"
+                    src="{% if saved_setting.custom_logo %}{{ saved_setting.custom_logo.url }}{% elif preview_school.logo %}{{ preview_school.logo.url }}{% endif %}"
+                    {% if not saved_setting.custom_logo and not preview_school.logo %}style="display:none;"{% endif %}
+                  >
+                </div>
+              </div>
+
+              <div class="legacy-subtitle" id="subtitleLine" style="color: {{ saved_setting.accent_color|default:'#cb0804' }}; font-size: {{ saved_setting.text_font_size|default:18|add:2 }}px;">
+                1st Term Exam Hall Ticket Academic Year <span id="yearValue">2026</span>
+              </div>
+
+              <div class="legacy-content" id="contentArea">
+                <div class="legacy-details" id="student-section" style="color: {{ saved_setting.text_color|default:'#000080' }}; font-size: {{ saved_setting.text_font_size|default:18 }}px;">
+                  <p>Candidate's Name: <span>Aarav Sharma</span></p>
+                  <p>Father's Name: <span>Rakesh Sharma</span></p>
+                  <p>Exam Center: <span class="legacy-highlight">{{ preview_school.school_name|default:'School Name' }}</span></p>
+                  <p>Class: <span>10 - A</span> &nbsp;&nbsp;&nbsp; Seat No: <span class="legacy-highlight">HT-1028</span></p>
+                </div>
+
+                <div class="legacy-photo-box">
+                  <span id="studentPhotoPlaceholder">Student Photo</span>
+                </div>
+              </div>
+
+              <div class="legacy-sign" id="signature-section">
+                {% if saved_setting.custom_signature %}
+                <img
+                  src="{{ saved_setting.custom_signature.url }}"
+                  id="signatureImagePreview"
+                  data-default-src="{{ saved_setting.custom_signature.url }}"
+                  alt="Signature preview"
+                >
+                <div id="signaturePlaceholder" style="display:none;">Signature</div>
+                {% elif preview_school.principal_signature %}
+                <img
+                  src="{{ preview_school.principal_signature.url }}"
+                  id="signatureImagePreview"
+                  data-default-src="{{ preview_school.principal_signature.url }}"
+                  alt="Signature preview"
+                >
+                <div id="signaturePlaceholder" style="display:none;">Signature</div>
+                {% else %}
+                <img id="signatureImagePreview" alt="Signature preview" data-default-src="" style="display:none;">
+                <div id="signaturePlaceholder">Signature</div>
+                {% endif %}
+                <p class="sign-content" style="font-size: {{ saved_setting.text_font_size|default:18|add:-2 }}px;">Exam Incharge Sign</p>
+              </div>
+            </div>
+            {% else %}
+            <div class="ticket-header" id="header">
+              <div class="ticket-logo">
+                <div class="ticket-logo-placeholder" id="logoPlaceholder">School<br>Logo</div>
+                <img id="logoPreview" alt="School logo preview" style="display:none;">
+              </div>
+              <div>
+                <h3 class="school-name" id="schoolName" contenteditable="true">EduFlow Public School</h3>
+                <p class="ticket-subtitle">{{ document_config.header_subtitle }}</p>
+              </div>
+            </div>
+
+            <div class="ticket-body">
+              <section class="ticket-section" id="student-section">
+                <div class="ticket-section-title">{{ document_config.student_section_title }}</div>
+                <div class="ticket-section-body">
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <span class="info-label">Student Name</span>
+                      <span class="info-value">Aarav Sharma</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Roll Number</span>
+                      <span class="info-value">18</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Class</span>
+                      <span class="info-value">10 - A</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="info-label">Admission No.</span>
+                      <span class="info-value">EDU-2026-0018</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="ticket-section" id="subjects-section" {% if not document_config.show_subjects %}style="display:none;"{% endif %}>
+                <div class="ticket-section-title">{{ document_config.details_section_title }}</div>
+                <div class="ticket-section-body">
+                  <table class="subject-table">
+                    <thead>
+                      <tr>
+                        <th>Label</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for label, value in document_config.details_rows %}
+                        <tr>
+                          <td>{{ label }}</td>
+                          <td>{{ value }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="ticket-section" id="signature-section">
+                <div class="ticket-section-title">Signature</div>
+                <div class="ticket-section-body">
+                  <div class="signature-box">
+                    <div class="signature-item">Student Signature</div>
+                    <div class="signature-item">Office Signature</div>
+                    <div class="signature-item">Principal Signature</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="ticket-section" id="instructions-section" {% if not document_config.show_instructions %}style="display:none;"{% endif %}>
+                <div class="ticket-section-title">Instructions</div>
+                <div class="ticket-section-body">
+                  <ul class="instructions-list">
+                    {% for item in document_config.instructions %}
+                      <li>{{ item }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </section>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const previewLayout = document.getElementById('previewLayout');
+  const sectionToggles = document.querySelectorAll('.section-toggle');
+  const logoUpload = document.getElementById('logoUpload');
+  const signatureUpload = document.getElementById('signatureUpload');
+  const accentColor = document.getElementById('accentColor');
+  const backgroundColor = document.getElementById('backgroundColor');
+  const textColor = document.getElementById('textColor');
+  const borderStyle = document.getElementById('borderStyle');
+  const borderColor = document.getElementById('borderColor');
+  const titleFontSize = document.getElementById('titleFontSize');
+  const textFontSize = document.getElementById('textFontSize');
+  const logoPosition = document.getElementById('logoPosition');
+  const textPosition = document.getElementById('textPosition');
+  const imagePosition = document.getElementById('imagePosition');
+  const hallTicketSchoolTitle = document.getElementById('hallTicketSchoolTitle');
+  const hallTicketSchoolAddress = document.getElementById('hallTicketSchoolAddress');
+  const idCardHeaderImageUpload = document.getElementById('idCardHeaderImageUpload');
+  const idCardFooterImageUpload = document.getElementById('idCardFooterImageUpload');
+  const idCardWatermarkUpload = document.getElementById('idCardWatermarkUpload');
+  const idCardSignatureUpload = document.getElementById('idCardSignatureUpload');
+  const idCardLogoUpload = document.getElementById('idCardLogoUpload');
+  const idCardTitleText = document.getElementById('idCardTitleText');
+  const idCardSubtitleText = document.getElementById('idCardSubtitleText');
+  const idCardTextAlign = document.getElementById('idCardTextAlign');
+  const idCardTitleFontSize = document.getElementById('idCardTitleFontSize');
+  const idCardSubtitleFontSize = document.getElementById('idCardSubtitleFontSize');
+  const idCardHeaderColor = document.getElementById('idCardHeaderColor');
+  const idCardFooterColor = document.getElementById('idCardFooterColor');
+  const idCardDataLineSpacing = document.getElementById('idCardDataLineSpacing');
+  const idCardDataFontSize = document.getElementById('idCardDataFontSize');
+  const idCardDataFontFamily = document.getElementById('idCardDataFontFamily');
+  const idCardLabelColor = document.getElementById('idCardLabelColor');
+  const idCardValueColor = document.getElementById('idCardValueColor');
+  const idCardImageUrls = {
+    header: '',
+    footer: '',
+    watermark: '',
+    logo: '',
+    signature: '',
+  };
+  const nirgamTemplateLanguage = document.getElementById('nirgamTemplateLanguage');
+  const nirgamTitlePrimary = document.getElementById('nirgamTitlePrimary');
+  const nirgamTitleSecondary = document.getElementById('nirgamTitleSecondary');
+  const bonafideSchoolTitleInput = document.getElementById('bonafideSchoolTitleInput');
+  const bonafideTitleFontSize = document.getElementById('bonafideTitleFontSize');
+  const bonafideSchoolAddressInput = document.getElementById('bonafideSchoolAddressInput');
+  const bonafideAddressFontSize = document.getElementById('bonafideAddressFontSize');
+  const bonafideLogoUpload = document.getElementById('bonafideLogoUpload');
+  const bonafideLogoPosition = document.getElementById('bonafideLogoPosition');
+  const bonafidePhotoRequired = document.getElementById('bonafidePhotoRequired');
+  const bonafideBorderStyle = document.getElementById('bonafideBorderStyle');
+  const bonafideBorderColor = document.getElementById('bonafideBorderColor');
+  const bonafideBorderWidth = document.getElementById('bonafideBorderWidth');
+  let bonafideLogoObjectUrl = '';
+  const reportCardSchoolTitle = document.getElementById('reportCardSchoolTitle');
+  const reportCardSchoolAddress = document.getElementById('reportCardSchoolAddress');
+  const reportCardAccentColor = document.getElementById('reportCardAccentColor');
+  const reportCardBackgroundColor = document.getElementById('reportCardBackgroundColor');
+  const reportCardTextColor = document.getElementById('reportCardTextColor');
+  const reportCardBorderStyle = document.getElementById('reportCardBorderStyle');
+  const reportCardBorderColor = document.getElementById('reportCardBorderColor');
+  const reportCardTitleFontSize = document.getElementById('reportCardTitleFontSize');
+  const reportCardTextFontSize = document.getElementById('reportCardTextFontSize');
+  const reportCardLogoUpload = document.getElementById('reportCardLogoUpload');
+  const reportCardSignatureUpload = document.getElementById('reportCardSignatureUpload');
+  let reportCardLogoObjectUrl = '';
+  let reportCardSignatureObjectUrl = '';
+  const nirgamTitleValues = {
+    mr: {
+      primary: 'विद्यार्थी प्रवेश रजिस्टर (शासन नियमानुसार)',
+      secondary: 'विद्यार्थी प्रवेश निर्गम नोंदणी',
+    },
+    en: {
+      primary: 'Student Admission Register (As per Govt. Rules)',
+      secondary: 'Student Admission Leaving Register',
+    },
+  };
+  if (nirgamTitlePrimary && nirgamTitleSecondary) {
+    nirgamTitleValues.en = {
+      primary: nirgamTitlePrimary.value,
+      secondary: nirgamTitleSecondary.value,
+    };
+  }
+
+  function toggleSection(targetId, checked) {
+    const element = document.getElementById(targetId);
+    const copyElement = document.getElementById(targetId + '-copy');
+    if (element) element.style.display = checked ? 'block' : 'none';
+    if (copyElement) copyElement.style.display = checked ? 'block' : 'none';
+  }
+
+  sectionToggles.forEach((toggle) => {
+    toggle.addEventListener('change', () => toggleSection(toggle.dataset.target, toggle.checked));
+  });
+
+  function idCardDocument() {
+    const frame = document.getElementById('idCardTemplateFrame');
+    return frame && frame.contentDocument ? frame.contentDocument : null;
+  }
+
+  function setIdCardImage(selector, objectUrl) {
+    const doc = idCardDocument();
+    if (!doc) return;
+    doc.querySelectorAll(selector).forEach((img) => {
+      if (!img.dataset.defaultSrc) {
+        img.dataset.defaultSrc = img.getAttribute('src') || '';
+      }
+      img.src = objectUrl || img.dataset.defaultSrc;
+    });
+  }
+
+  function setIdCardBackground(selector, objectUrl) {
+    const doc = idCardDocument();
+    if (!doc) return;
+    doc.querySelectorAll(selector).forEach((item) => {
+      item.style.backgroundImage = objectUrl ? `url("${objectUrl}")` : '';
+      item.style.backgroundSize = objectUrl ? 'cover' : '';
+      item.style.backgroundPosition = objectUrl ? 'center' : '';
+      item.style.backgroundRepeat = objectUrl ? 'no-repeat' : '';
+    });
+  }
+
+  function applyIdCardCustomization() {
+    const doc = idCardDocument();
+    if (!doc) return;
+
+    setIdCardBackground('.idcard-header-bar', idCardImageUrls.header);
+    setIdCardBackground('.idcard-footer-bar', idCardImageUrls.footer);
+    setIdCardImage('.idcard-watermark', idCardImageUrls.watermark);
+    setIdCardImage('.idcard-header-logo', idCardImageUrls.logo);
+    setIdCardImage('.idcard-principal-sign', idCardImageUrls.signature);
+
+    doc.querySelectorAll('.idcard-header-bar').forEach((item) => {
+      if (idCardImageUrls.header) {
+        item.style.width = '650px';
+        item.style.height = '300px';
+      } else {
+        item.style.width = '';
+        item.style.height = '';
+        item.style.backgroundColor = idCardHeaderColor ? idCardHeaderColor.value : '';
+      }
+    });
+    doc.querySelectorAll('.idcard-footer-bar').forEach((item) => {
+      if (!idCardImageUrls.footer) {
+        item.style.backgroundColor = idCardFooterColor ? idCardFooterColor.value : '';
+      }
+    });
+    doc.querySelectorAll('.idcard-header-bar').forEach((item) => {
+      item.classList.remove('idcard-logo-left', 'idcard-logo-right');
+      if (idCardTextAlign && idCardTextAlign.value === 'right') {
+        item.classList.add('idcard-logo-right');
+      } else {
+        item.classList.add('idcard-logo-left');
+      }
+    });
+    doc.querySelectorAll('.idcard-header-bar .idcard-brand-wrap').forEach((item) => {
+      item.style.display = idCardImageUrls.header ? 'none' : 'flex';
+      item.classList.remove('idcard-align-left', 'idcard-align-center', 'idcard-align-right');
+      item.style.position = 'relative';
+      item.style.justifyContent = 'center';
+      item.style.flexDirection = 'row';
+      item.style.gap = '20px';
+    });
+    doc.querySelectorAll('.idcard-footer-bar .idcard-brand-wrap').forEach((item) => {
+      item.style.display = idCardImageUrls.footer ? 'none' : 'flex';
+      item.classList.remove('idcard-align-left', 'idcard-align-center', 'idcard-align-right');
+      item.style.justifyContent = 'center';
+    });
+    doc.querySelectorAll('.idcard-header-logo').forEach((item) => {
+      item.style.position = '';
+      item.style.top = '';
+      item.style.transform = '';
+      item.style.left = '';
+      item.style.right = '';
+      if (idCardTextAlign) {
+        if (idCardTextAlign.value === 'left') {
+          item.style.position = 'absolute';
+          item.style.top = '50%';
+          item.style.transform = 'translateY(-50%)';
+          item.style.left = '30px';
+        } else if (idCardTextAlign.value === 'right') {
+          item.style.position = 'absolute';
+          item.style.top = '50%';
+          item.style.transform = 'translateY(-50%)';
+          item.style.right = '30px';
+        }
+      }
+    });
+    doc.querySelectorAll('.idcard-footer-logo').forEach((item) => {
+      item.style.display = 'none';
+    });
+    doc.querySelectorAll('.idcard-header-text').forEach((item) => {
+      item.classList.remove('idcard-text-left', 'idcard-text-center', 'idcard-text-right');
+      item.classList.add('idcard-text-center');
+      item.style.width = '100%';
+      item.style.textAlign = 'center';
+    });
+    doc.querySelectorAll('.idcard-header-title').forEach((item) => {
+      if (idCardTitleText) item.textContent = idCardTitleText.value;
+      if (idCardTitleFontSize) item.style.fontSize = `${idCardTitleFontSize.value}px`;
+    });
+    doc.querySelectorAll('.idcard-header-subtitle').forEach((item) => {
+      if (idCardSubtitleText) item.textContent = idCardSubtitleText.value;
+      if (idCardSubtitleFontSize) item.style.fontSize = `${idCardSubtitleFontSize.value}px`;
+    });
+    doc.querySelectorAll('.idcard-front-details, .idcard-back-details').forEach((item) => {
+      if (idCardDataFontSize) item.style.fontSize = `${idCardDataFontSize.value}px`;
+      if (idCardDataFontFamily) item.style.fontFamily = idCardDataFontFamily.value;
+    });
+    doc.querySelectorAll('.idcard-detail-line').forEach((item) => {
+      if (idCardDataLineSpacing) {
+        item.style.marginTop = `${Math.max(Number(idCardDataLineSpacing.value) / 2, 0)}px`;
+        item.style.marginBottom = `${Math.max(Number(idCardDataLineSpacing.value) / 2, 0)}px`;
+        item.style.lineHeight = `${Math.max(1.1, Number(idCardDataLineSpacing.value) / 20 + 1)}`;
+      }
+    });
+    doc.querySelectorAll('.idcard-detail-label').forEach((item) => {
+      if (idCardLabelColor) item.style.color = idCardLabelColor.value;
+      if (idCardDataFontFamily) item.style.fontFamily = idCardDataFontFamily.value;
+    });
+    doc.querySelectorAll('.idcard-detail-value').forEach((item) => {
+      if (idCardValueColor) item.style.color = idCardValueColor.value;
+      if (idCardDataFontFamily) item.style.fontFamily = idCardDataFontFamily.value;
+    });
+    doc.querySelectorAll('.idcard-principal-sign').forEach((item) => {
+      const hasSignature = Boolean(idCardImageUrls.signature || item.getAttribute('src'));
+      item.style.display = hasSignature ? 'block' : 'none';
+    });
+  }
+
+  function bindIdCardImageUpload(input, key) {
+    if (!input) return;
+    const expectedSizes = {
+      header: { width: 650, height: 300, label: '650 x 300 px' },
+      footer: { width: 650, height: 100, label: '650 x 100 px' },
+    };
+    input.addEventListener('change', async (event) => {
+      const file = event.target.files[0];
+      if (idCardImageUrls[key]) {
+        URL.revokeObjectURL(idCardImageUrls[key]);
+        idCardImageUrls[key] = '';
+      }
+      if (file) {
+        const objectUrl = URL.createObjectURL(file);
+        const expected = expectedSizes[key];
+        if (expected) {
+          const image = new Image();
+          const dimensions = await new Promise((resolve) => {
+            image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+            image.onerror = () => resolve(null);
+            image.src = objectUrl;
+          });
+          if (!dimensions || dimensions.width !== expected.width || dimensions.height !== expected.height) {
+            URL.revokeObjectURL(objectUrl);
+            event.target.value = '';
+            alert(`Please upload a ${expected.label} image for the ${key} section.`);
+            applyIdCardCustomization();
+            return;
+          }
+        }
+        idCardImageUrls[key] = objectUrl;
+      }
+      applyIdCardCustomization();
+    });
+  }
+
+  bindIdCardImageUpload(idCardHeaderImageUpload, 'header');
+  bindIdCardImageUpload(idCardFooterImageUpload, 'footer');
+  bindIdCardImageUpload(idCardWatermarkUpload, 'watermark');
+  bindIdCardImageUpload(idCardLogoUpload, 'logo');
+  bindIdCardImageUpload(idCardSignatureUpload, 'signature');
+
+  [
+    idCardTitleText,
+    idCardSubtitleText,
+    idCardTextAlign,
+    idCardTitleFontSize,
+    idCardSubtitleFontSize,
+    idCardHeaderColor,
+    idCardFooterColor,
+    idCardDataLineSpacing,
+    idCardDataFontSize,
+    idCardDataFontFamily,
+    idCardLabelColor,
+    idCardValueColor,
+  ].forEach((control) => {
+    if (!control) return;
+    control.addEventListener('input', applyIdCardCustomization);
+    control.addEventListener('change', applyIdCardCustomization);
+  });
+
+  const idCardFrame = document.getElementById('idCardTemplateFrame');
+  if (idCardFrame) {
+    idCardFrame.addEventListener('load', applyIdCardCustomization);
+  }
+
+  if (logoUpload && previewLayout) {
+    logoUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      const previews = previewLayout.querySelectorAll('img[id^="logoPreview"]');
+      const placeholders = previewLayout.querySelectorAll('[id^="logoPlaceholder"]');
+      if (!file) {
+        previews.forEach((img) => {
+          const defaultSrc = img.dataset.defaultSrc || '';
+          if (defaultSrc) {
+            img.src = defaultSrc;
+            img.style.display = 'block';
+          } else {
+            img.style.display = 'none';
+            img.removeAttribute('src');
+          }
+        });
+        placeholders.forEach((item) => {
+          item.style.display = previews[0] && previews[0].dataset.defaultSrc ? 'none' : 'block';
+        });
+        return;
+      }
+      const objectUrl = URL.createObjectURL(file);
+      previews.forEach((img) => {
+        img.src = objectUrl;
+        img.style.display = 'block';
+      });
+      placeholders.forEach((item) => item.style.display = 'none');
+    });
+  }
+
+  if (nirgamTemplateLanguage) {
+    function selectedNirgamLanguage() {
+      return nirgamTemplateLanguage.value || 'en';
+    }
+
+    function updateNirgamTitleInputs(language) {
+      if (!nirgamTitlePrimary || !nirgamTitleSecondary) return;
+      const values = nirgamTitleValues[language] || nirgamTitleValues.en;
+      nirgamTitlePrimary.value = values.primary;
+      nirgamTitleSecondary.value = values.secondary;
+    }
+
+    function nirgamUrlWithTitles(url, language) {
+      if (!url) return '';
+      const values = nirgamTitleValues[language] || nirgamTitleValues.en;
+      const parsedUrl = new URL(url, window.location.origin);
+      parsedUrl.searchParams.set('title_primary', values.primary);
+      parsedUrl.searchParams.set('title_secondary', values.secondary);
+      return `${parsedUrl.pathname}${parsedUrl.search}`;
+    }
+
+    function applyNirgamTitlesToFrame() {
+      const frame = document.getElementById('nirgamTemplateFrame');
+      if (!frame || !frame.contentDocument) return;
+      const values = nirgamTitleValues[selectedNirgamLanguage()] || nirgamTitleValues.en;
+      const primaryTitle = frame.contentDocument.querySelector('.title-wrap h1');
+      const secondaryTitle = frame.contentDocument.querySelector('.title-wrap h2');
+      if (primaryTitle) primaryTitle.textContent = values.primary;
+      if (secondaryTitle) secondaryTitle.textContent = values.secondary;
+    }
+
+    nirgamTemplateLanguage.addEventListener('change', (event) => {
+      const language = event.target.value || 'en';
+      const selectedOption = event.target.selectedOptions[0];
+      const frame = document.getElementById('nirgamTemplateFrame');
+      const previewUrl = selectedOption ? selectedOption.dataset.previewUrl : '';
+      updateNirgamTitleInputs(language);
+      if (frame && previewUrl) {
+        frame.src = nirgamUrlWithTitles(previewUrl, language);
+      }
+    });
+
+    [nirgamTitlePrimary, nirgamTitleSecondary].forEach((input) => {
+      if (!input) return;
+      input.addEventListener('input', () => {
+        const language = selectedNirgamLanguage();
+        nirgamTitleValues[language] = {
+          primary: nirgamTitlePrimary.value,
+          secondary: nirgamTitleSecondary.value,
+        };
+        applyNirgamTitlesToFrame();
+      });
+    });
+
+    const nirgamFrame = document.getElementById('nirgamTemplateFrame');
+    if (nirgamFrame) {
+      nirgamFrame.addEventListener('load', applyNirgamTitlesToFrame);
+      const selectedOption = nirgamTemplateLanguage.selectedOptions[0];
+      const previewUrl = selectedOption ? selectedOption.dataset.previewUrl : '';
+      if (previewUrl) {
+        nirgamFrame.src = nirgamUrlWithTitles(previewUrl, selectedNirgamLanguage());
+      }
+    }
+  }
+
+  function bonafideDocument() {
+    const frame = document.getElementById('bonafideTemplateFrame');
+    return frame && frame.contentDocument ? frame.contentDocument : null;
+  }
+
+  function applyBonafideSchoolHeader() {
+    const doc = bonafideDocument();
+    if (!doc) return;
+    const title = doc.getElementById('bonafideSchoolTitle');
+    const address = doc.getElementById('bonafideSchoolAddress');
+    if (title && bonafideSchoolTitleInput) {
+      title.textContent = bonafideSchoolTitleInput.value;
+    }
+    if (title && bonafideTitleFontSize) {
+      title.style.fontSize = `${bonafideTitleFontSize.value}px`;
+    }
+    if (address && bonafideSchoolAddressInput) {
+      address.textContent = bonafideSchoolAddressInput.value;
+    }
+    if (address && bonafideAddressFontSize) {
+      address.style.fontSize = `${bonafideAddressFontSize.value}px`;
+    }
+  }
+
+  function applyBonafideLogo() {
+    const doc = bonafideDocument();
+    if (!doc || !bonafideLogoPosition) return;
+    const leftCell = doc.getElementById('bonafideLogoLeftCell');
+    const rightCell = doc.getElementById('bonafideLogoRightCell');
+    const logos = [
+      doc.getElementById('bonafideLogoLeft'),
+      doc.getElementById('bonafideLogoRight'),
+    ].filter(Boolean);
+    const position = bonafideLogoPosition.value;
+
+    if (bonafideLogoObjectUrl) {
+      logos.forEach((logo) => {
+        logo.src = bonafideLogoObjectUrl;
+        logo.style.display = 'inline-block';
+      });
+    }
+
+    if (leftCell) leftCell.style.visibility = position === 'left' ? 'visible' : 'hidden';
+    if (rightCell) rightCell.style.visibility = position === 'right' ? 'visible' : 'hidden';
+    if (position === 'none') {
+      if (leftCell) leftCell.style.visibility = 'hidden';
+      if (rightCell) rightCell.style.visibility = 'hidden';
+    }
+  }
+
+  function applyBonafidePhotoRequired() {
+    const doc = bonafideDocument();
+    if (!doc || !bonafidePhotoRequired) return;
+    const photoRow = doc.getElementById('bonafideStudentPhotoRow');
+    if (photoRow) {
+      photoRow.style.display = bonafidePhotoRequired.value === 'yes' ? 'table-row' : 'none';
+    }
+  }
+
+  function applyBonafideBorder() {
+    const doc = bonafideDocument();
+    if (!doc || !bonafideBorderStyle || !bonafideBorderColor || !bonafideBorderWidth) return;
+    const page = doc.getElementById('bonafidePage');
+    if (!page) return;
+    if (bonafideBorderStyle.value === 'none') {
+      page.style.border = 'none';
+      return;
+    }
+    page.style.borderStyle = bonafideBorderStyle.value;
+    page.style.borderColor = bonafideBorderColor.value;
+    page.style.borderWidth = `${bonafideBorderWidth.value}px`;
+  }
+
+  function applyBonafideCustomization() {
+    applyBonafideSchoolHeader();
+    applyBonafideLogo();
+    applyBonafidePhotoRequired();
+    applyBonafideBorder();
+  }
+
+  [
+    bonafideSchoolTitleInput,
+    bonafideTitleFontSize,
+    bonafideSchoolAddressInput,
+    bonafideAddressFontSize,
+    bonafideLogoPosition,
+    bonafidePhotoRequired,
+    bonafideBorderStyle,
+    bonafideBorderColor,
+    bonafideBorderWidth,
+  ].forEach((control) => {
+    if (!control) return;
+    control.addEventListener('input', applyBonafideCustomization);
+    control.addEventListener('change', applyBonafideCustomization);
+  });
+
+  if (bonafideLogoUpload) {
+    bonafideLogoUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (bonafideLogoObjectUrl) {
+        URL.revokeObjectURL(bonafideLogoObjectUrl);
+        bonafideLogoObjectUrl = '';
+      }
+      if (file) {
+        bonafideLogoObjectUrl = URL.createObjectURL(file);
+      }
+      applyBonafideLogo();
+    });
+  }
+
+  const bonafideFrame = document.getElementById('bonafideTemplateFrame');
+  if (bonafideFrame) {
+    bonafideFrame.addEventListener('load', applyBonafideCustomization);
+  }
+
+  function applyReportCardCustomization() {
+    const sheet = document.getElementById('reportCardSheet');
+    const header = document.getElementById('reportCardHeader');
+    const title = document.getElementById('reportCardTitlePreview');
+    const address = document.getElementById('reportCardAddressPreview');
+    if (!sheet) return;
+
+    if (reportCardSchoolTitle && title) title.textContent = reportCardSchoolTitle.value;
+    if (reportCardSchoolAddress && address) address.textContent = reportCardSchoolAddress.value;
+    if (reportCardAccentColor && title) title.style.color = reportCardAccentColor.value;
+    if (reportCardBackgroundColor) sheet.style.background = reportCardBackgroundColor.value;
+    if (reportCardTextColor) sheet.style.color = reportCardTextColor.value;
+    if (reportCardTitleFontSize && title) title.style.fontSize = `${reportCardTitleFontSize.value}px`;
+    if (reportCardTextFontSize) sheet.style.fontSize = `${reportCardTextFontSize.value}px`;
+    if (reportCardBorderStyle) {
+      if (reportCardBorderStyle.value === 'none') {
+        sheet.style.border = 'none';
+      } else {
+        sheet.style.borderStyle = reportCardBorderStyle.value;
+        sheet.style.borderWidth = '3px';
+        sheet.style.borderColor = reportCardBorderColor ? reportCardBorderColor.value : '#0f766e';
+      }
+    }
+    if (header && reportCardBorderColor) {
+      header.style.borderColor = reportCardBorderColor.value;
+    }
+  }
+
+  [
+    reportCardSchoolTitle,
+    reportCardSchoolAddress,
+    reportCardAccentColor,
+    reportCardBackgroundColor,
+    reportCardTextColor,
+    reportCardBorderStyle,
+    reportCardBorderColor,
+    reportCardTitleFontSize,
+    reportCardTextFontSize,
+  ].forEach((control) => {
+    if (!control) return;
+    control.addEventListener('input', applyReportCardCustomization);
+    control.addEventListener('change', applyReportCardCustomization);
+  });
+
+  if (reportCardLogoUpload) {
+    reportCardLogoUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      const logo = document.getElementById('reportCardLogoPreview');
+      const placeholder = document.getElementById('reportCardLogoPlaceholder');
+      if (!logo || !placeholder) return;
+      if (reportCardLogoObjectUrl) {
+        URL.revokeObjectURL(reportCardLogoObjectUrl);
+        reportCardLogoObjectUrl = '';
+      }
+      if (!file) {
+        const defaultSrc = logo.dataset.defaultSrc || '';
+        if (defaultSrc) {
+          logo.src = defaultSrc;
+          logo.style.display = 'block';
+          placeholder.style.display = 'none';
+        } else {
+          logo.removeAttribute('src');
+          logo.style.display = 'none';
+          placeholder.style.display = 'block';
+        }
+        return;
+      }
+      reportCardLogoObjectUrl = URL.createObjectURL(file);
+      logo.src = reportCardLogoObjectUrl;
+      logo.style.display = 'block';
+      placeholder.style.display = 'none';
+    });
+  }
+
+  if (reportCardSignatureUpload) {
+    reportCardSignatureUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      const signature = document.getElementById('reportCardSignaturePreview');
+      if (!signature) return;
+      if (reportCardSignatureObjectUrl) {
+        URL.revokeObjectURL(reportCardSignatureObjectUrl);
+        reportCardSignatureObjectUrl = '';
+      }
+      if (!file) {
+        const defaultSrc = signature.dataset.defaultSrc || '';
+        if (defaultSrc) {
+          signature.src = defaultSrc;
+          signature.style.display = 'block';
+        } else {
+          signature.removeAttribute('src');
+          signature.style.display = 'none';
+        }
+        return;
+      }
+      reportCardSignatureObjectUrl = URL.createObjectURL(file);
+      signature.src = reportCardSignatureObjectUrl;
+      signature.style.display = 'block';
+    });
+  }
+  applyReportCardCustomization();
+
+  if (signatureUpload) {
+    signatureUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      const signaturePreview = document.getElementById('signatureImagePreview');
+      const signaturePlaceholder = document.getElementById('signaturePlaceholder');
+      if (!signaturePreview || !signaturePlaceholder) return;
+
+      if (!file) {
+        const defaultSrc = signaturePreview.dataset.defaultSrc || '';
+        if (defaultSrc) {
+          signaturePreview.src = defaultSrc;
+          signaturePreview.style.display = 'block';
+          signaturePlaceholder.style.display = 'none';
+        } else {
+          signaturePreview.style.display = 'none';
+          signaturePreview.removeAttribute('src');
+          signaturePlaceholder.style.display = 'block';
+        }
+        return;
+      }
+
+      signaturePreview.src = URL.createObjectURL(file);
+      signaturePreview.style.display = 'block';
+      signaturePlaceholder.style.display = 'none';
+    });
+  }
+
+  function applyAccentColor(color) {
+    document.querySelectorAll('.legacy-title-wrap h1, .legacy-subtitle').forEach((item) => {
+      item.style.color = color;
+    });
+  }
+
+  function applyBorderStyle(style) {
+    document.querySelectorAll('.legacy-ticket').forEach((sheet) => {
+      sheet.dataset.borderStyle = style;
+      if (style === 'none') {
+        sheet.style.border = 'none';
+      } else {
+        sheet.style.borderStyle = 'solid';
+        sheet.style.borderWidth = '4px';
+        sheet.style.borderColor = borderColor ? borderColor.value : '#cb0804';
+      }
+    });
+  }
+
+  function applyBorderColor(color) {
+    document.querySelectorAll('.legacy-ticket').forEach((sheet) => {
+      if (sheet.dataset.borderStyle !== 'none') {
+        sheet.style.borderColor = color;
+      }
+    });
+  }
+
+  function applyBackgroundColor(color) {
+    document.querySelectorAll('.legacy-ticket').forEach((sheet) => {
+      sheet.style.background = color;
+    });
+  }
+
+  function applyTextColor(color) {
+    document.querySelectorAll('.legacy-title-wrap p, .legacy-details').forEach((item) => {
+      item.style.color = color;
+    });
+  }
+
+  function applyTitleFontSize(size) {
+    document.querySelectorAll('.legacy-title-wrap h1').forEach((item) => {
+      item.style.fontSize = `${size}px`;
+    });
+  }
+
+  function applyTextFontSize(size) {
+    document.querySelectorAll('.legacy-title-wrap p, .legacy-details').forEach((item) => {
+      item.style.fontSize = `${size}px`;
+    });
+    document.querySelectorAll('.legacy-subtitle').forEach((item) => {
+      item.style.fontSize = `${Number(size) + 2}px`;
+    });
+    document.querySelectorAll('.sign-content').forEach((item) => {
+      item.style.fontSize = `${Math.max(Number(size) - 2, 12)}px`;
+    });
+  }
+
+  function applyLogoPosition(position) {
+    document.querySelectorAll('.legacy-header').forEach((header) => {
+      header.classList.remove('logo-left', 'logo-right', 'logo-center');
+      if (position === 'left') header.classList.add('logo-left');
+      if (position === 'right') header.classList.add('logo-right');
+      if (position === 'center') header.classList.add('logo-center');
+    });
+  }
+
+  function applyTextPosition(position) {
+    document.querySelectorAll('.legacy-title-wrap').forEach((wrap) => {
+      wrap.classList.remove('text-left', 'text-right');
+      if (position === 'left') wrap.classList.add('text-left');
+      if (position === 'right') wrap.classList.add('text-right');
+    });
+  }
+
+  function applyHallTicketSchoolText() {
+    const title = hallTicketSchoolTitle ? hallTicketSchoolTitle.value : '';
+    const address = hallTicketSchoolAddress ? hallTicketSchoolAddress.value : '';
+    document.querySelectorAll('#schoolName').forEach((element) => {
+      element.textContent = title;
+    });
+    document.querySelectorAll('#schoolAddressPreview').forEach((element) => {
+      element.textContent = address;
+    });
+    document.querySelectorAll('.legacy-highlight').forEach((element) => {
+      if (element.textContent.trim()) {
+        element.textContent = title;
+      }
+    });
+  }
+
+  function applyImagePosition(position) {
+    document.querySelectorAll('.legacy-content').forEach((content) => {
+      content.classList.remove('image-left', 'image-top', 'image-bottom');
+      if (position === 'left') content.classList.add('image-left');
+      if (position === 'top') content.classList.add('image-top');
+      if (position === 'bottom') content.classList.add('image-bottom');
+    });
+    document.querySelectorAll('.legacy-sign').forEach((sign) => {
+      sign.classList.toggle('image-left', position === 'left');
+    });
+  }
+
+  if (accentColor) {
+    accentColor.addEventListener('input', (e) => applyAccentColor(e.target.value));
+    applyAccentColor(accentColor.value);
+  }
+  if (backgroundColor) {
+    backgroundColor.addEventListener('input', (e) => applyBackgroundColor(e.target.value));
+    applyBackgroundColor(backgroundColor.value);
+  }
+  if (textColor) {
+    textColor.addEventListener('input', (e) => applyTextColor(e.target.value));
+    applyTextColor(textColor.value);
+  }
+  if (borderStyle) {
+    borderStyle.addEventListener('change', (e) => applyBorderStyle(e.target.value));
+    applyBorderStyle(borderStyle.value);
+  }
+  if (borderColor) {
+    borderColor.addEventListener('input', (e) => applyBorderColor(e.target.value));
+    applyBorderColor(borderColor.value);
+  }
+  if (titleFontSize) {
+    titleFontSize.addEventListener('input', (e) => applyTitleFontSize(e.target.value));
+    applyTitleFontSize(titleFontSize.value);
+  }
+  if (textFontSize) {
+    textFontSize.addEventListener('input', (e) => applyTextFontSize(e.target.value));
+    applyTextFontSize(textFontSize.value);
+  }
+  if (logoPosition) {
+    logoPosition.addEventListener('change', (e) => applyLogoPosition(e.target.value));
+    applyLogoPosition(logoPosition.value);
+  }
+  if (textPosition) {
+    textPosition.addEventListener('change', (e) => applyTextPosition(e.target.value));
+    applyTextPosition(textPosition.value);
+  }
+  if (imagePosition) {
+    imagePosition.addEventListener('change', (e) => applyImagePosition(e.target.value));
+    applyImagePosition(imagePosition.value);
+  }
+  [hallTicketSchoolTitle, hallTicketSchoolAddress].forEach((input) => {
+    if (!input) return;
+    input.addEventListener('input', applyHallTicketSchoolText);
+  });
+  applyHallTicketSchoolText();
+</script>
+{% endblock %}

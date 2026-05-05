@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-lg-4">
+      <div class="card ">
+        <div class="card-body">
+          <label class="form-label">{{ form.name.label }}</label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="text-danger small">{{ form.name.errors|striptags }}</div>{% endif %}
+          <div class="row mt-3">
+            <div class="col-md-6">
+            <button class="btn btn-primary w-100" type="submit">Save Role</button>
+
+            </div>
+            <div class="col-md-6">
+            <a class="btn btn-secondary w-100" href="{% url 'role_control' %}">Back</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card ">
+        <div class="card-body">
+          <h6 class="mb-3">Access Permissions</h6>
+          {% if form.features.errors %}<div class="text-danger small mb-2">{{ form.features.errors|striptags }}</div>{% endif %}
+          <div class="row row-cols-1 row-cols-md-2 g-2">
+            {% for checkbox in form.features %}
+              <div class="col">
+                <label class="border rounded p-2 d-flex gap-2 align-items-start h-100">
+                  {{ checkbox.tag }}
+                  <span>{{ checkbox.choice_label }}</span>
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

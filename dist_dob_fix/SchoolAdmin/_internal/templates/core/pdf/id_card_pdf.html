@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; }
+    .id-card { width: 340px; border: 1px solid #333; border-radius: 10px; padding: 12px; }
+    .text-center { text-align: center; }
+    .logo { max-height: 50px; }
+    .photo { width: 90px; height: 110px; object-fit: cover; border: 1px solid #999; }
+    .row { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <div class="id-card">
+    <div class="text-center">
+      {% if school.logo %}<img src="{{ school.logo.path }}" class="logo">{% endif %}
+      <h3 style="margin:8px 0 4px 0;">{{ school.school_name|default:'School Name' }}</h3>
+      <strong>Student ID Card</strong>
+    </div>
+    <div class="text-center" style="margin:10px 0;">
+      {% if student.photo %}<img src="{{ student.photo.path }}" class="photo">{% endif %}
+    </div>
+    <div class="row"><strong>Name:</strong> {{ student.name }}</div>
+    <div class="row"><strong>Class:</strong> {{ student.student_class }} - {{ student.section }}</div>
+    <div class="row"><strong>Roll No:</strong> {{ student.roll_no }}</div>
+    <div class="row"><strong>Admission No:</strong> {{ student.admission_no }}</div>
+  </div>
+</body>
+</html>

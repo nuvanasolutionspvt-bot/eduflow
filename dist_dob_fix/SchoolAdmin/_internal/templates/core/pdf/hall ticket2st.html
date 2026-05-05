@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hall Ticket</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f5fcc8;
+      font-family: Arial, sans-serif;
+    }
+
+    .ticket {
+      width: 250mm;
+      margin: auto;
+      border: 4px solid #cb0804;
+      padding: 10px;
+      box-sizing: border-box;
+      background: #f5fcc8;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header img {
+      width: 90px;
+    }
+
+    .title {
+      text-align: center;
+      flex: 1;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 38px;
+      color: #cb0804;
+    }
+
+    .title p {
+      margin: 5px 0;
+      font-weight: 600;
+      font-size: 18px;
+      color: #000080;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 20px;
+      color: #cb0804;
+      font-weight: bold;
+      margin: 0px 0;
+    }
+
+    .content {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .details {
+      font-size: 18px;
+      color: #000080;
+      font-weight: bold;
+    }
+
+    .details p {
+      margin: 12px 0;
+    }
+.details p span{
+  text-decoration: underline;
+}
+    .highlight {
+      color: #d00000;
+    }
+
+    .photo-box {
+      width: 110px;
+      margin-top: -32px;
+      height: 150px;
+      background: #fff;
+    }
+
+    .photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .sign {
+      text-align: right;
+      margin-top: 0px;
+    }
+
+    .sign img {
+      width: 150px;
+      margin-top: -18px;
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 10mm;
+      }
+
+      body {
+        background: none;
+      }
+
+      .ticket {
+        width: 100%;
+        margin: 0;
+        border: 4px solid #cb0804;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="ticket">
+
+    <!-- HEADER -->
+    <div class="header">
+      <img src="https://fapzmzg.stripocdn.email/content/guids/CABINET_ebe41dd0609056780a422bcbc31ba9ffd654c0c8854635aa223bd5bdc3cba0ff/images/school_logo.png">
+
+      <div class="title">
+        <h1>Al-Rizwan English School</h1>
+        <p>Chaitaniya Nagar Road, Gani Colony, Nanded.</p>
+      </div>
+
+      <img src="https://fapzmzg.stripocdn.email/content/guids/CABINET_ebe41dd0609056780a422bcbc31ba9ffd654c0c8854635aa223bd5bdc3cba0ff/images/school_logo.png">
+    </div>
+
+    <!-- SUBTITLE -->
+    <div class="subtitle">
+      2nd Term Exam Hall Ticket Academic Year <span id="year"></span>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- LEFT DETAILS -->
+      <div class="details">
+        <p>Candidate's Name: <span>{{ student.name }}</span></p>
+        <p>Father's Name: <span>{{ student.father_name }}</span></p>
+        <p>
+          Exam Center:
+          <span class="highlight">{{ school.school_name }}</span>
+        </p>
+        <p>
+          Class: <span>{{ student.student_class }}{% if student.section %} - {{ student.section }}{% endif %}</span>
+          &nbsp;&nbsp;&nbsp;
+          Seat No: <span class="highlight">{{ seat_number }}</span>
+        </p>
+      </div>
+
+      <!-- PHOTO -->
+      <div class="photo-box">
+        {% if student.photo %}
+          <img src="{{ student.photo.url }}">
+        {% elif student_photo %}
+          <img src="{{ student_photo }}">
+        {% else %}
+          PHOTO
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- SIGN -->
+    <div class="sign">
+      <img src="/media/school/logo/sign.jpeg">
+    </div>
+
+  </div>
+<script>
+  document.getElementById("year").innerText = new Date().getFullYear();
+</script>
+</body>
+</html>

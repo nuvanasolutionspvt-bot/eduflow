@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bonafide Certificate</title>
+
+<style>
+@page {
+    size: A4;
+    margin: 0;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 210mm;
+    height: 297mm;
+    background: #ffffff;   /* pure white */
+}
+
+.main-container {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    background: #ffffff;   /* remove grey */
+}
+
+* {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+@media print {
+    table[background] {
+        background-image:url(https://eyoifkc.stripocdn.email/content/guids/CABINET_a44deb9a489aa70bc084ead0110fabd5a15e3f7369649d987891f2de3958c078/images/chatgpt_image_feb_28_2026_03_44_43_pm.png) !important;
+        background-repeat:no-repeat !important;
+        background-size:100% 100% !important;
+        background-position:center !important;
+        background-color:#ffffff !important;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="main-container">
+
+<table width="100%" height="100%" cellspacing="0" cellpadding="0"
+background="https://eyoifkc.stripocdn.email/content/guids/CABINET_a44deb9a489aa70bc084ead0110fabd5a15e3f7369649d987891f2de3958c078/images/chatgpt_image_feb_28_2026_03_44_43_pm.png"
+style="background-image:url(https://eyoifkc.stripocdn.email/content/guids/CABINET_a44deb9a489aa70bc084ead0110fabd5a15e3f7369649d987891f2de3958c078/images/chatgpt_image_feb_28_2026_03_44_43_pm.png);
+background-repeat:no-repeat;
+background-size:100% 100%;
+background-position:center;
+background-color:#ffffff;">
+
+<!-- DATE -->
+<tr>
+<td align="right" style="padding-top:220px;padding-right:125px;">
+<span style="font-size:14px;">
+Date:- {{ today_date }}
+</span>
+</td>
+</tr>
+
+<!-- TITLE -->
+<tr>
+<td align="center">
+<h2 style="font-size:32px;">
+<strong><u>Bonafide Certificate</u></strong>
+</h2>
+</td>
+</tr>
+
+<!-- IMAGE -->
+<tr>
+<td align="right" style="padding-top:20px;padding-right:120px ;">
+<img src="{% if student.photo %}{{ student.photo.url }}{% else %}{{ bonafide_student_image|default:'' }}{% endif %}"
+width="120"
+style="display:block;">
+</td>
+</tr>
+
+<!-- CONTENT -->
+<tr>
+<td style="padding:40px;font-size:16px;line-height:32px;">
+
+This is certified that Master/Miss 
+<strong>{{ student.name }}</strong> 
+is the student of our 
+<strong>{{ school.school_name }}</strong>. 
+
+He/She is studying in Std. 
+<strong>{{ student.student_class }}</strong> 
+for the academic year 
+<strong>{{academic_year}}</strong>. 
+
+Admission No. 
+<strong>{{ student.admission_no }}</strong>. 
+
+His/Her Birth date recorded in the General Register of the school is 
+<strong>{{ student.dob|date:"d/m/Y" }}</strong> 
+according to our school record.
+
+<p style="text-align:center;margin-top:20px;">
+Hence this is certificate.
+</p>
+
+</td>
+</tr>
+
+<!-- SIGN -->
+<tr>
+<td align="right" style="padding-right:120px;padding-bottom:80px;">
+<strong>Principal</strong>
+</td>
+</tr>
+
+</table>
+
+</div>
+</body>
+</html>

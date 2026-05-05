@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ID Card Front & Back</title>
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    background:#f6f6f6;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.card-wrapper{
+    width:650px;        /* updated */
+    height:1080px;      /* updated */
+    margin:20px auto;
+    background:#ffffff;
+    position:relative;
+    page-break-after:always;
+    overflow:hidden;    /* keeps layout clean */
+}
+
+/* WATERMARK LOGO */
+.card-wrapper::before{
+    content:"";
+    position:absolute;
+    top:55%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:350px;
+    height:350px;
+    background-image:url("{{ watermark_logo }}");
+    background-size:contain;
+    background-repeat:no-repeat;
+    opacity:0.07;
+    z-index:1;
+}
+
+/* Common content area */
+.content{
+    position:relative;
+    z-index:2;
+    padding:50px 70px 70px 70px;
+}
+
+/* Student image */
+.student-img{
+    width:130px;
+    height:160px;
+    object-fit:cover;
+    border:2px solid #000;
+    display:block;
+    margin:0 auto 40px auto;
+}
+
+/* Labels */
+.label{
+    font-size:26px;
+    color:#1a1464;
+    margin:30px 0;
+}
+
+.line{
+    display:inline-block;
+    border-bottom:2px solid #000;
+    width:260px;
+    margin-left:10px;
+}
+
+/* BACK SIDE TITLE */
+.back-title{
+    background:#2d5e05;
+    color:#ffffff;
+    font-size:40px;
+    font-weight:bold;
+    padding:15px 40px;
+}
+
+/* Back side labels */
+.back-label{
+    font-size:30px;
+    color:#1a1464;
+    margin:40px 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= FRONT SIDE ================= -->
+<div class="card-wrapper">
+
+    <!-- HEADER -->
+    <img src="https://eyoifkc.stripocdn.email/content/guids/CABINET_5541b621d0cb61b4f7f82b3471ad9d42dfb30ca4ecfa90a7e5ef3d3ee3bbb7ac/images/primary_icard_frontjpg.jpeg" width="650">
+
+    <div class="content">
+
+        <img src="{{ student_image }}" class="student-img">
+    
+
+        <div class="label">
+            Student's Name : <span class="line">{{ student.name }}</span>
+        </div>
+
+        <div class="label">
+            Father's Name : <span class="line">{{ student.father_name }}</span>
+        </div>
+
+        <div class="label">
+            Class : <span class="line">{{ student.student_class }}{% if student.section %} - {{ student.section }}{% endif %}</span>
+        </div>
+    <img src="https://eyoifkc.stripocdn.email/content/guids/CABINET_5541b621d0cb61b4f7f82b3471ad9d42dfb30ca4ecfa90a7e5ef3d3ee3bbb7ac/images/chatgpt_image_mar_1_2026_04_16_29_pm.png" width="650">
+
+    </div>
+
+    <!-- FOOTER -->
+
+</div>
+
+
+
+<!-- ================= BACK SIDE ================= -->
+<div class="card-wrapper">
+
+    <div class="back-title">
+        Details of Student
+    </div>
+
+    <div class="content">
+
+        <div class="back-label">
+            Date of Birth : {{ student.dob|date:"d/m/Y" }}
+        </div>
+
+        <div class="back-label">
+            Admission No. : {{ student.admission_no }}
+        </div>
+
+        <div class="back-label">
+            Contact No. : {{ student.mobile }}
+        </div>
+
+        <div class="back-label">
+            Address : {{ student.address }}
+        </div>
+
+        <div class="back-label">
+            Academic Year : {{ academic_year }}
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

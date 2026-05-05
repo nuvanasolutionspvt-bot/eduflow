@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Fee Management{% endblock %}
+{% block page_title %}Fee Management{% endblock %}
+{% block content %}
+<div class="row">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="">
+              <h1 class="fs-3 mb-1">Fee receipts</h1>
+              <p class="mb-0">Track academic fees, optional donations, paid and pending amounts.</p>
+            </div>
+            <div>
+              <a href="{% url 'fee_receipt_add' %}" class="btn btn-primary">Add Receipt</a>
+            </div>
+          </div>
+        </div>
+      </div>
+<div class="row">
+  <div class="col-12">
+     <div>
+             <form method="get" class="" id="filterForm">
+            <div class="row mb-3  justify-content-between align-items-center">
+            
+                <div class="col-md-5">
+        <input type="text" class="form-control" placeholder="Search by name, admission no, roll no" name="q" id="searchInput" value="{{ filters.q }}">
+              </div>
+              <div class="col-md-5 select-custom">
+                 <select class="form-select select2" name="class">
+          <option value="">All Classes</option>
+          {% for value, label in student_classes %}
+            <option value="{{ value }}" {% if filters.class == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+                </div>
+              <div class="col-md-2">
+                  <button class="btn btn-outline-secondary w-100" type="submit">
+                  <i class="ti ti-filter"></i> Filter
+                </button>
+               
+              
+                </div>
+
+           
+            </div>
+            </form>
+          </div>
+  </div>
+</div>
+
+
+<div class="card ">
+  <div class="table-responsive">
+  <table class="table mb-0 text-nowrap table-hover">
+      <thead class="table-light border-light">
+        <tr>
+          <th>Receipt</th>
+          <th>Student</th>
+          <th>Class</th>
+          <th>Date</th>
+          <th class="text-end">Grand Total</th>
+          <th class="text-end">Paid</th>
+          <th class="text-end">Pending</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for receipt in receipts %}
+        <tr>
+          <td>{{ receipt.receipt_no }}</td>
+          <td>{{ receipt.student.name }}</td>
+          <td>{{ receipt.student.student_class }} {{ receipt.student.section }}</td>
+          <td>{{ receipt.receipt_date|date:"d M Y" }}</td>
+          <td class="text-end">&#8377;{{ receipt.grand_total }}</td>
+          <td class="text-end">&#8377;{{ receipt.paid_amount }}</td>
+          <td class="text-end">
+            <span class="badge {% if receipt.pending_amount %}bg-warning-subtle text-warning{% else %}bg-success-subtle text-success{% endif %}">
+              &#8377;{{ receipt.pending_amount }}
+            </span>
+          </td>
+          <td class="text-end">
+            <a href="{% url 'fee_receipt_detail' receipt.id %}" class="link-success p-0 m-0 " style="background: transparent;border:none"><i class="ti ti-printer"></i></a>
+            <a href="{% url 'fee_receipt_edit' receipt.id %}" ><i class="ti ti-edit"></i></a>
+            <form method="post" action="{% url 'fee_receipt_delete' receipt.id %}" class="d-inline delete-form">
+              {% csrf_token %}
+              <button type="submit" class="link-danger p-0 m-0 " style="background: transparent;border:none"><i class="ti ti-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="text-center py-4">No fee receipts found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <div class="card-footer bg-white">
+    <nav>
+      <ul class="pagination mb-0">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&class={{ filters.class }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&class={{ filters.class }}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

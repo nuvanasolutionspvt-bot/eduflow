@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ID Card Bulk</title>
+
+<style>
+@page {
+    size: 650px 1028px;
+    margin: 0;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+}
+.page {
+    width: 650px;
+    height: 1028px;
+    margin: 0 auto;
+    overflow: hidden;
+    page-break-after: always;
+}
+.page:last-child {
+    page-break-after: auto;
+}
+@media screen {
+    body {
+        background: #6c7074;
+        padding: 12px 0;
+    }
+    .page {
+        background: #ffffff;
+        margin-bottom: 16px;
+        box-shadow: 0 0 0 1px #4f5256;
+    }
+}
+</style>
+
+</head>
+
+<body style="margin:0;padding:0;background:#ffffff;">
+
+{% for card in student_cards %}
+
+<!-- ================= FRONT SIDE ================= -->
+
+<div class="page">
+
+<table width="650" height="1028" cellspacing="0" cellpadding="0" align="center"
+       style="width:650px;height:1028px;background-color:#ffffff;position:relative;">
+
+  <!-- Watermark -->
+  <tr>
+    <td style="position:absolute;width:650px;height:1028px;text-align:center;">
+      <img src="{% static 'images/school_logo.png' %}"
+           style="width:400px;opacity:0.08;margin-top:636px;">
+    </td>
+  </tr>
+
+  <!-- Header Image -->
+  <tr>
+    <td align="center">
+      <img src="{% static 'images/header.png' %}"
+           width="650"
+           style="width:650px;height:auto;">
+    </td>
+  </tr>
+
+  <!-- Student Image -->
+  <tr>
+    <td align="center" style="padding-top:40px;">
+      <img src="{% if card.student.photo %}{{ card.student.photo.url }}{% else %}{{ card.student_image }}{% endif %}"
+           width="200" height="250"
+           style="width:160px;height:200px;object-fit:cover;border:3px solid #000;">
+    </td>
+  </tr>
+
+  <!-- Student Details -->
+  <tr>
+    <td style="padding:40px 40px;font-family:Arial;font-size:32px;color:#000;">
+      <p>Student's Name : {{ card.student.name }}</p>
+      <p>Father's Name : {{ card.student.father_name }}</p>
+      <p>Class : {{ card.student.student_class }}{% if card.student.section %} - {{ card.student.section }}{% endif %}</p>
+    </td>
+  </tr>
+
+  <!-- Footer Image -->
+  <tr>
+    <td align="center" valign="bottom">
+      <img src="{% static 'images/footer.png' %}"
+           width="650"
+           style="width:650px;height:auto;margin-top:-58px;">
+    </td>
+  </tr>
+
+</table>
+
+</div>
+
+
+<!-- ================= BACK SIDE ================= -->
+
+<div class="page">
+
+<table width="650" height="1028" cellspacing="0" cellpadding="0" align="center"
+       style="width:650px;height:1028px;background-color:#ffffff;position:relative;">
+
+  <!-- Watermark -->
+  <tr>
+    <td style="position:absolute;width:650px;height:1028px;text-align:center;">
+      <img src="{% static 'images/school_logo.png' %}"
+           style="width:400px;opacity:0.08;margin-top:450px;">
+    </td>
+  </tr>
+
+  <!-- Green Header -->
+  <tr>
+    <td style="background-color:#274e13;height:120px;padding-left:40px;">
+      <span style="color:#ffffff;font-size:48px;font-weight:bold;font-family:Arial;">
+        Details of Student
+      </span>
+    </td>
+  </tr>
+
+  <!-- Details Content -->
+  <tr>
+    <td valign="top"
+        style="padding:80px 60px 0 60px;font-family:Arial;color:#1a145a;font-size:42px;">
+
+      <p style="margin-bottom:80px;">
+        Date of Birth : {{ card.student.dob|date:"d/m/Y" }}
+      </p>
+
+      <p style="margin-bottom:80px;">
+        Admission No. : {{ card.student.admission_no }}
+      </p>
+
+      <p style="margin-bottom:80px;">
+        Contact No. : {{ card.student.mobile }}
+      </p>
+
+      <p style="margin-bottom:80px;">
+        Address : {{ card.student.address }}
+      </p>
+
+      <p style="margin-bottom:80px;">
+        Academic Year : {{ academic_year }}
+      </p>
+
+    </td>
+  </tr>
+
+</table>
+
+</div>
+
+{% endfor %}
+
+</body>
+</html>

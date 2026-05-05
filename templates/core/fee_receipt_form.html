@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}{% if object %}Edit Fee Receipt{% else %}Add Fee Receipt{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Edit Fee Receipt{% else %}Add Fee Receipt{% endif %}{% endblock %}
+{% block content %}
+<form method="post" data-fee-receipt-form="true">
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card ">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label">{{ form.student.label }}</label>
+              {{ form.student }}
+              {% if form.student.errors %}<div class="text-danger small">{{ form.student.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">{{ form.receipt_date.label }}</label>
+              {{ form.receipt_date }}
+              {% if form.receipt_date.errors %}<div class="text-danger small">{{ form.receipt_date.errors|striptags }}</div>{% endif %}
+            </div>
+          </div>
+
+          <hr>
+          <h6 class="mb-3">Academic Fees</h6>
+          <div class="row g-3">
+            {% for field in form %}
+              {% if field.name != 'student' and field.name != 'receipt_date' and field.name != 'remarks' %}
+                <div class="col-md-4">
+                  <label class="form-label">{{ field.label }}</label>
+                  {{ field }}
+                  {% if field.errors %}<div class="text-danger small">{{ field.errors|striptags }}</div>{% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div class="col-12">
+              <label class="form-label">{{ form.remarks.label }}</label>
+              {{ form.remarks }}
+              {% if form.remarks.errors %}<div class="text-danger small">{{ form.remarks.errors|striptags }}</div>{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card ">
+        <div class="card-body">
+          <h6 class="mb-3">Receipt Summary</h6>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Academic Total</span>
+            <strong data-fee-academic-total>&#8377;0</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Donation</span>
+            <strong data-fee-donation>&#8377;0</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Grand Total</span>
+            <strong data-fee-grand-total>&#8377;0</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Paid</span>
+            <strong data-fee-paid>&#8377;0</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2">
+            <span>Pending</span>
+            <strong class="text-danger" data-fee-pending>&#8377;0</strong>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6">
+ <button type="submit" class="btn btn-primary w-100">Save Receipt</button>
+            </div>
+           <div class="col-md-6">
+            <a href="{% url 'fee_receipt_list' %}" class="btn btn-outline-secondary w-100">Back</a>
+
+           </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('[data-fee-receipt-form="true"]');
+  if (!form) return;
+
+  const fields = ['tuition_fee', 'library_fee', 'lab_fee', 'sports_fee', 'other_fee'];
+  const getValue = (name) => {
+    const value = parseInt(form.querySelector(`[name="${name}"]`)?.value || '0', 10);
+    return Number.isFinite(value) && value > 0 ? value : 0;
+  };
+  const setText = (selector, value) => {
+    const node = form.querySelector(selector);
+    if (node) node.innerHTML = `&#8377;${value}`;
+  };
+  const updateTotals = () => {
+    const academicTotal = fields.reduce((total, name) => total + getValue(name), 0);
+    const donation = getValue('donation');
+    const paid = getValue('paid_amount');
+    const grandTotal = academicTotal + donation;
+    const pending = Math.max(0, grandTotal - paid);
+
+    setText('[data-fee-academic-total]', academicTotal);
+    setText('[data-fee-donation]', donation);
+    setText('[data-fee-grand-total]', grandTotal);
+    setText('[data-fee-paid]', paid);
+    setText('[data-fee-pending]', pending);
+  };
+
+  [...fields, 'donation', 'paid_amount'].forEach((name) => {
+    const input = form.querySelector(`[name="${name}"]`);
+    if (input) {
+      input.setAttribute('min', '0');
+      input.addEventListener('input', updateTotals);
+    }
+  });
+  updateTotals();
+});
+</script>
+{% endblock %}

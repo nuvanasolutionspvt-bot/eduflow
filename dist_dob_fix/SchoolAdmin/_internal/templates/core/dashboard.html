@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card card-stat shadow-sm">
+      <div class="card-body">
+        <div>
+          <p class="text-muted mb-1 text-uppercase small">Total Students</p>
+          <h2 class="mb-0">{{ total_students }}</h2>
+        </div>
+        <span class="icon-pill">
+          <i class="bi bi-people-fill"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h6 class="mb-3">Class-wise Student Count</h6>
+        <div class="row row-cols-2 row-cols-md-4 g-2">
+          {% for c in class_counts %}
+          <div class="col">
+            <div class="border rounded p-2 text-center">
+              <div class="fw-semibold">Class {{ c.student_class }}</div>
+              <div class="text-muted">{{ c.total }} students</div>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-muted">No students added yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4"><a class="btn btn-primary w-100 py-3" href="{% url 'student_add' %}">Add Student</a></div>
+  <div class="col-md-4"><a class="btn btn-outline-primary w-100 py-3" href="{% url 'student_list' %}">View Students</a></div>
+  <div class="col-md-4"><a class="btn btn-outline-secondary w-100 py-3" href="{% url 'idcard_form' %}">Generate ID Card</a></div>
+  <div class="col-md-4"><a class="btn btn-outline-secondary w-100 py-3" href="{% url 'bonafide_form' %}">Generate Bonafide</a></div>
+  <div class="col-md-4"><a class="btn btn-outline-secondary w-100 py-3" href="{% url 'nirgam_form' %}">Generate Nirgam</a></div>
+  <div class="col-md-4"><a class="btn btn-outline-secondary w-100 py-3" href="{% url 'hallticket_form' %}">Generate Hall Ticket</a></div>
+</div>
+{% endblock %}

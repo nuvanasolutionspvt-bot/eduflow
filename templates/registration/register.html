@@ -1,0 +1,120 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% if current_school %}{{ current_school.name }}{% else %}School Administration{% endif %}{% endblock %}</title>
+  <link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+  <link rel="stylesheet"  href="{% static 'assets/css/main.css' %}">
+  <link rel="stylesheet"  href="{% static 'assets/css/style.css' %}">
+
+  <style>
+    .sidebar .documents-toggle {
+      width: auto;
+    }
+    .sidebar .documents-toggle .ti-chevron-down {
+      font-size: 14px;
+      transition: transform .2s ease;
+    }
+    .sidebar .documents-toggle[aria-expanded="true"] .ti-chevron-down {
+      transform: rotate(180deg);
+    }
+    .sidebar .documents-submenu {
+      margin: 0 12px 4px;
+      padding-left: 12px;
+      border-left: 1px solid #e5e7eb;
+    }
+    .sidebar .documents-submenu .nav-link {
+      margin: 1px 0;
+      padding: 7px 10px;
+      font-size: 13px;
+      gap: 10px;
+    }
+    .sidebar .documents-submenu .nav-link .ti {
+      font-size: 16px;
+    }
+    .sidebar.collapsed .documents-submenu {
+      display: none;
+    }
+  </style>
+
+</head>
+<body >
+
+  
+
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+  <div class="card " style="max-width:420px; width:100%;">
+    <div class="card-body p-5">
+      <div class="text-center mb-3">
+     <a href="index.html" class="mb-4 d-inline-block"><img src="./assets/images/logo-icon.svg" alt="" width="36">
+      <span class="ms-2"> <img src="./assets/images/logo.svg" alt="">eduflow</span>
+      </a>
+        <h1 class="card-title mb-5 h5">Create your account</h1>
+
+      </div>
+
+         <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                  <div class="alert alert-danger py-2">{{ form.non_field_errors|striptags }}</div>
+                {% endif %}
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">{{ form.school_name.label }}</label>
+                    {{ form.school_name }}
+                    {% if form.school_name.errors %}<div class="text-danger small mt-1">{{ form.school_name.errors|striptags }}</div>{% endif %}
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">{{ form.principal_name.label }}</label>
+                    {{ form.principal_name }}
+                    {% if form.principal_name.errors %}<div class="text-danger small mt-1">{{ form.principal_name.errors|striptags }}</div>{% endif %}
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label">{{ form.school_address.label }}</label>
+                    {{ form.school_address }}
+                    {% if form.school_address.errors %}<div class="text-danger small mt-1">{{ form.school_address.errors|striptags }}</div>{% endif %}
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label">{{ form.school_logo.label }}</label>
+                    {{ form.school_logo }}
+                    {% if form.school_logo.errors %}<div class="text-danger small mt-1">{{ form.school_logo.errors|striptags }}</div>{% endif %}
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">{{ form.username.label }}</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>{% endif %}
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">{{ form.admin_email.label }}</label>
+                    {{ form.admin_email }}
+                    {% if form.admin_email.errors %}<div class="text-danger small mt-1">{{ form.admin_email.errors|striptags }}</div>{% endif %}
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">{{ form.password1.label }}</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}<div class="text-danger small mt-1">{{ form.password1.errors|striptags }}</div>{% endif %}
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">{{ form.password2.label }}</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}<div class="text-danger small mt-1">{{ form.password2.errors|striptags }}</div>{% endif %}
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-4">Create School and Login</button>
+              </form>
+
+
+      <div class="text-center mt-3 small text-muted">
+        Already have an account? <a class="link-danger" href="{% url 'login' %}">
+                  Login Instead <i class="bi bi-arrow-right"></i>
+                </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

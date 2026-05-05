@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="mr">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+
+    body {
+      margin: 0;
+      padding-top: 50px;
+      padding-left: 30px;
+      padding-right: 30px;
+      font-family: "Noto Sans Devanagari", "Mangal", "Nirmala UI", sans-serif;
+      color: #111;
+      font-size: 12px;
+    }
+
+    .sheet {
+      width: 100%;
+    }
+
+    .title-wrap {
+      text-align: center;
+      margin: 2px 0 10px;
+    }
+
+    .title-wrap h1,
+    .title-wrap h2 {
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .title-wrap h1 {
+      font-size: 24px;
+    }
+
+    .title-wrap h2 {
+      font-size: 22px;
+      margin-top: 8px;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .meta-item {
+      white-space: nowrap;
+    }
+
+    .meta-item span {
+      display: inline-block;
+      min-width: 140px;
+      border-bottom: 1px solid #111;
+      line-height: 1.1;
+      vertical-align: middle;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border: 1px solid #111;
+      text-align: center;
+      vertical-align: middle;
+      padding: 2px;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    thead th {
+      font-size: 10px;
+      font-weight: 700;
+      height: 66px;
+    }
+
+    .vertical {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      white-space: nowrap;
+      height: 122px;
+      line-height: 1.1;
+    }
+
+    .nums th {
+      font-weight: 600;
+      height: 26px;
+      font-size: 10px;
+    }
+
+    tbody td {
+      height: 190px;
+      vertical-align: top;
+      font-size: 11px;
+    }
+
+    .left {
+      text-align: left;
+      padding-left: 4px;
+    }
+
+    .foot {
+      margin-top: 14px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .foot .left-meta {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .line {
+      display: inline-block;
+      min-width: 220px;
+      border-bottom: 1px solid #111;
+      vertical-align: middle;
+    }
+
+    .stamp {
+      width: 84px;
+      height: 84px;
+      border: 2px solid #111;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.1;
+    }
+
+    .sign {
+      min-width: 280px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="title-wrap">
+      <h1>विद्यार्थी प्रवेश रजिस्टर (शासन नियमानुसार)</h1>
+      <h2>विद्यार्थी प्रवेश निर्गम नोंदणी</h2>
+    </div>
+
+    <div class="meta">
+      <div class="meta-item">शाळेचे नाव : <span>{{ school.school_name|default:'' }}</span></div>
+      <div class="meta-item">तालुका : <span>{{ student.taluka_mr|default:student.taluka|default:'' }}</span></div>
+      <div class="meta-item">जिल्हा : <span>{{ student.district_mr|default:student.district|default:'' }}</span></div>
+      <div class="meta-item">रजिस्टर पान नं. : <span>{{ student.register_page_no|default:'' }}</span></div>
+    </div>
+
+    <table>
+      <colgroup>
+        <col style="width:3.6%">
+        <col style="width:8%">
+        <col style="width:4%">
+        <col style="width:5.5%">
+        <col style="width:4%">
+        <col style="width:3.8%">
+        <col style="width:3.2%">
+        <col style="width:3.2%">
+        <col style="width:3.2%">
+        <col style="width:4.2%">
+        <col style="width:4.2%">
+        <col style="width:4.2%">
+        <col style="width:4%">
+        <col style="width:2.8%">
+        <col style="width:5.5%">
+        <col style="width:3.8%">
+        <col style="width:4.5%">
+        <col style="width:3.8%">
+        <col style="width:4%">
+        <col style="width:6.5%">
+        <col style="width:4.5%">
+        <col style="width:3.5%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th rowspan="2"><div class="vertical">क्रमांक</div></th>
+          <th rowspan="2">विद्यार्थ्याचे पूर्ण नाव व पत्ता</th>
+          <th rowspan="2"><div class="vertical">आईचे नाव</div></th>
+          <th rowspan="2">वडिलांचे / पालकांचे नाव</th>
+          <th rowspan="2">धर्म / जात</th>
+          <th rowspan="2"><div class="vertical">वडिलांचा व्यवसाय</div></th>
+          <th rowspan="2"><div class="vertical">जन्मस्थान</div></th>
+          <th rowspan="2"><div class="vertical">प्रवेश दिनांक</div></th>
+          <th rowspan="2"><div class="vertical">मातृभाषा</div></th>
+          <th colspan="2">जन्म दिनांक</th>
+          <th colspan="2">मागील शाळा</th>
+          <th rowspan="2"><div class="vertical">प्रवेश वर्ग</div></th>
+          <th rowspan="2">ओळख खूण</th>
+          <th rowspan="2"><div class="vertical">प्रवेश अधिकारी सही</div></th>
+          <th rowspan="2">इयत्ता</th>
+          <th rowspan="2"><div class="vertical">शाळा सोडण्याचे कारण</div></th>
+          <th rowspan="2"><div class="vertical">टी.सी. दिनांक</div></th>
+          <th rowspan="2">नोंद अधिकारी सही</th>
+          <th rowspan="2"><div class="vertical">मुख्याध्यापक सही</div></th>
+          <th rowspan="2"><div class="vertical">शेरा</div></th>
+        </tr>
+        <tr>
+          <th>अंकात</th>
+          <th>अक्षरात</th>
+          <th>शाळेचे नाव</th>
+          <th>इयत्ता</th>
+        </tr>
+        <tr class="nums">
+          <th>१</th><th>२</th><th>३</th><th>४</th><th>५</th><th>६</th><th>७</th><th>८</th><th>९</th><th>१०</th><th>११</th><th>१२</th><th>१३</th><th>१४</th><th>१५</th><th>१६</th><th>१७</th><th>१८</th><th>१९</th><th>२०</th><th>२१</th><th>२२</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+  <td><div class="vertical">{{ student.roll_no|default:'-' }}</div></td>
+
+  <td class="left">
+    <div class="vertical">
+      {{ student.name_mr|default:student.name }}<br>
+      {{ student.address_mr|default:student.address|default:'' }}
+    </div>
+  </td>
+
+  <td><div class="vertical">{{ student.mother_name_mr|default:student.mother_name|default:'-' }}</div></td>
+
+  <td><div class="vertical">{{ student.father_name_mr|default:student.father_name|default:'-' }}</div></td>
+
+  <td>
+    <div class="vertical">
+      {{ student.religion_mr|default:student.religion|default:'' }}
+      {% if student.caste_mr or student.caste %}<br>{% endif %}
+      {{ student.caste_mr|default:student.caste|default:'' }}
+    </div>
+  </td>
+
+  <td><div class="vertical">{{ student.father_occupation_mr|default:student.father_occupation|default:'' }}</div></td>
+
+  <td><div class="vertical">{{ student.birth_place_mr|default:student.birth_place|default:'' }}</div></td>
+
+  <td><div class="vertical">{{ today|date:"d/m/Y" }}</div></td>
+
+  <td><div class="vertical">{{ student.mother_tongue_mr|default:student.mother_tongue|default:'' }}</div></td>
+
+  <td><div class="vertical">{{ student.dob|date:"d/m/Y" }}</div></td>
+
+  <td><div class="vertical"></div></td>
+
+  <td><div class="vertical">{{ student.previous_school_name_mr|default:student.previous_school_name|default:'' }}</div></td>
+
+  <td><div class="vertical">{{ student.previous_school_class|default:'' }}</div></td>
+
+  <td><div class="vertical">{{ student.admission_no }}</div></td>
+
+  <td><div class="vertical"></div></td>
+
+  <td><div class="vertical"></div></td>
+
+  <td><div class="vertical">{{ student.student_class }}-{{ student.section }}</div></td>
+
+  <td class="left">
+    <div class="vertical">{{ reason|default:'' }}</div>
+  </td>
+
+  <td>
+    <div class="vertical">
+      {% if leaving_date %}{{ leaving_date }}{% endif %}
+    </div>
+  </td>
+
+  <td><div class="vertical"></div></td>
+
+  <td>
+    <div class="vertical">
+      {% if principal_signature %}
+        <img src="{{ principal_signature }}" style="max-height:42px;">
+      {% endif %}
+    </div>
+  </td>
+
+  <td class="left">
+    <div class="vertical">{{ conduct_remarks|default:'' }}</div>
+  </td>
+</tr>
+      </tbody>
+    </table>
+
+    <div class="foot">
+      <div class="left-meta">
+        दिनांक : <span class="line">{% if leaving_date %}{{ leaving_date }}{% else %}{{ today|date:"d/m/Y" }}{% endif %}</span><br>
+        स्थळ : <span class="line"></span>
+      </div>
+
+      <div class="stamp">शाळेचा<br>शिक्का</div>
+
+      <div class="sign">
+        {% if principal_signature %}<img src="{{ principal_signature }}" style="max-height:56px;"><br>{% endif %}
+        मुख्याध्यापक / प्राचार्य
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% if no_exams %}
+      <div class="alert alert-warning">
+        No exam found. Please <a href="{% url 'exam_add' %}" class="alert-link">add an exam</a> first.
+      </div>
+    {% endif %}
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="col-md-12">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<div class="text-danger small">{{ field.errors|striptags }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      <div class="col-12">
+        <button class="btn btn-primary" type="submit">{{ submit_label }}</button>
+        {% if secondary_url and secondary_label %}
+          <a href="{{ secondary_url }}" class="btn btn-outline-secondary ms-2">{{ secondary_label }}</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

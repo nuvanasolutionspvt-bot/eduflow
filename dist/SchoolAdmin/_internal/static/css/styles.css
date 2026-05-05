@@ -1,0 +1,163 @@
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.sidebar {
+  min-height: 100vh;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 0 0 32px rgba(15, 23, 42, 0.04);
+}
+
+.sidebar-inner {
+  padding-bottom: 1.5rem;
+}
+
+.sidebar-nav .nav-item + .nav-item {
+  margin-top: 2px;
+}
+
+.sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #334155;
+  margin-bottom: 0;
+  border-radius: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.sidebar .nav-link i {
+  font-size: 1rem;
+}
+
+.sidebar .nav-link:hover {
+  background: #e9f2ff;
+  color: #0d6efd;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link.active:hover {
+  background: #0d6efd;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+}
+
+.sidebar .nav-link.text-danger {
+  color: #b91c1c;
+}
+
+.sidebar .nav-link.text-danger:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.text-sidebar-brand {
+  color: #0f172a;
+}
+
+.school-logo {
+  max-height: 54px;
+}
+
+.main-content {
+  padding-bottom: 2.5rem;
+}
+
+.page-header {
+  border: 1px solid #e5e7eb;
+}
+
+.page-header h1 {
+  color: #111827;
+}
+
+.card {
+  border-radius: 0.9rem;
+  border-color: #e5e7eb;
+}
+
+.card-stat {
+  border-left: 4px solid #0d6efd;
+}
+
+.card-stat .card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-stat .icon-pill {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+}
+
+.card-stat .card-body h2 {
+  font-size: 2rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #111827;
+}
+
+.form-text {
+  font-size: 0.8rem;
+}
+
+select,
+input,
+textarea {
+  width: 100%;
+}
+
+.select2-container {
+  width: 100% !important;
+}
+
+.table thead th {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table tbody td {
+  font-size: 0.9rem;
+}
+
+.filter-pill {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.import-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(2px);
+  border-radius: 0.9rem;
+}
+
+.import-loading-panel {
+  min-width: 280px;
+  max-width: 360px;
+  padding: 1.25rem 1.5rem;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.9rem;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+}

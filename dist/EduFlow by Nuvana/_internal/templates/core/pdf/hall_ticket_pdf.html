@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    @page { size: A4 landscape; margin: 0; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #dce8b5;
+      color: #001ea0;
+    }
+    .ticket {
+      border: 10px solid #ff0000;
+      min-height: 96vh;
+      padding: 14px 24px 18px;
+      box-sizing: border-box;
+    }
+    .top {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+    .top-col {
+      display: table-cell;
+      vertical-align: top;
+      text-align: center;
+    }
+    .logo {
+      height: 90px;
+      width: 90px;
+      object-fit: contain;
+    }
+    .mid-title {
+      width: 70%;
+    }
+    .school-name {
+      margin: 0;
+      color: #ff0000;
+      font-size: 66px;
+      line-height: 1;
+      font-weight: 700;
+    }
+    .school-address {
+      margin: 10px 0 0;
+      color: #001ea0;
+      font-size: 26px;
+      font-weight: 700;
+    }
+    .exam-title {
+      margin: 10px 0 4px;
+      color: #ff0000;
+      font-size: 54px;
+      line-height: 1.06;
+      text-align: center;
+      font-weight: 700;
+    }
+    .body {
+      margin-top: 8px;
+      position: relative;
+      min-height: 360px;
+      padding-right: 240px;
+    }
+    .row {
+      margin: 14px 0;
+      font-size: 28px;
+      font-weight: 700;
+      color: #001ea0;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+    .row .value {
+      color: #001ea0;
+      font-weight: 700;
+      display: inline-block;
+      min-width: 350px;
+      border-bottom: 4px solid #001ea0;
+      padding: 0 10px 4px;
+      margin-left: 6px;
+    }
+    .row .value.red {
+      color: #ff0000;
+      border-bottom: none;
+      min-width: 0;
+      padding: 0;
+    }
+    .split {
+      display: table;
+      width: 100%;
+    }
+    .split .cell {
+      display: table-cell;
+      width: 50%;
+    }
+    .photo-box {
+      position: absolute;
+      right: 20px;
+      top: 4px;
+      width: 180px;
+      height: 220px;
+      border: 2px solid #d8d8d8;
+      background: #f3f3f3;
+      overflow: hidden;
+    }
+    .photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .footer-sign {
+      margin-top: 16px;
+      text-align: right;
+      color: #001ea0;
+      font-size: 54px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .sign-img {
+      max-height: 120px;
+      max-width: 320px;
+      object-fit: contain;
+      display: inline-block;
+      margin-right: 30px;
+      margin-bottom: 2px;
+    }
+    .subject-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 17px;
+      color: #001ea0;
+    }
+    .subject-table th, .subject-table td {
+      border: 2px solid #001ea0;
+      padding: 6px 8px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.18);
+    }
+  </style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="top">
+      <div class="top-col">{% if school_logo %}<img src="{{ school_logo }}" class="logo">{% endif %}</div>
+      <div class="top-col mid-title">
+        <h1 class="school-name">{{ school.school_name|default:'School Name' }}</h1>
+        <p class="school-address">{{ school.address|default:'School Address' }}</p>
+      </div>
+      <div class="top-col">{% if school_logo %}<img src="{{ school_logo }}" class="logo">{% endif %}</div>
+    </div>
+
+    <h2 class="exam-title">{{ exam.name }} Hall Ticket</h2>
+
+    <div class="body">
+      <div class="photo-box">
+        {% if student_photo %}
+          <img src="{{ student_photo }}" alt="Student Photo">
+        {% endif %}
+      </div>
+
+      <div class="row">Candidate's Name:<span class="value">{{ student.name }}</span></div>
+      <div class="row">Father's Name:<span class="value">{{ student.father_name }}</span></div>
+      <div class="row">Exam Center:<span class="value red">{{ school.school_name }}, {{ school.address }}</span></div>
+
+      <div class="split">
+        <div class="cell row">Class:<span class="value">{{ student.student_class }} - {{ student.section }}</span></div>
+        <div class="cell row">Seat No:<span class="value">{{ seat_number }}</span></div>
+      </div>
+
+      {% if subjects %}
+      <table class="subject-table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Exam Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for subject in subjects %}
+          <tr>
+            <td>{{ subject.subject_name }}</td>
+            <td>{{ subject.exam_date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+
+    <div class="footer-sign">
+      {% if principal_signature %}
+        <img src="{{ principal_signature }}" class="sign-img" alt="Signature">
+      {% endif %}
+      <div>Exam Incharge sign</div>
+    </div>
+  </div>
+</body>
+</html>

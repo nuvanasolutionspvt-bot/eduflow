@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Role Control{% endblock %}
+{% block page_title %}Role Control{% endblock %}
+{% block page_subtitle %}
+  <p class="text-muted mb-0">Create roles, assign permissions, and attach roles to school users.</p>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card  h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+          <div>
+            <h6 class="mb-0">Roles</h6>
+            <div class="filter-pill">Permission sets for staff users.</div>
+          </div>
+          <a href="{% url 'role_add' %}" class="btn btn-primary btn-sm">
+            <i class="ti ti-plus me-1"></i>Add Role
+          </a>
+        </div>
+          <div class="card table-responsive ">
+  <table class="table mb-0 text-nowrap table-hover">
+              <thead class="table-light border-light">
+              <tr>
+                <th>Role</th>
+                <th class="text-end">Permissions</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for role in roles %}
+              <tr>
+                <td>{{ role.name }}</td>
+                <td class="text-end">{{ role.group.permissions.count }}</td>
+                <td class="text-end">
+                  <a href="{% url 'role_edit' role.id %}" ><i class="ti ti-edit"></i></a>
+                  <form method="post" action="{% url 'role_delete' role.id %}" class="d-inline delete-form">
+                    {% csrf_token %}
+                    <button type="submit" class="link-danger" style="border: none;background: transparent;"><i class="ti ti-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" class="text-center py-4">No roles created yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card  h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+          <div>
+            <h6 class="mb-0">Users</h6>
+            <div class="filter-pill">Create users and assign roles for this school.</div>
+          </div>
+          <a href="{% url 'role_user_add' %}" class="btn btn-primary btn-sm">
+            <i class="ti ti-user-plus me-1"></i>Add User
+          </a>
+        </div>
+         <div class="card table-responsive ">
+  <table class="table mb-0 text-nowrap table-hover">
+              <thead class="table-light border-light">
+              <tr>
+                <th>User</th>
+                <th>Roles</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in users %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ row.user.username }}</div>
+                  <div class="text-muted small">{{ row.user.email }}</div>
+                </td>
+                <td>
+                  {% for role in row.roles %}
+                    <span class="badge text-bg-light border">{{ role.name }}</span>
+                  {% empty %}
+                    <span class="text-muted">No role</span>
+                  {% endfor %}
+                </td>
+                <td>
+                  <span class="badge {% if row.user.is_active %} bg-success-subtle text-success{% else %} bg-secondary-subtle text-secondary{% endif %}">
+                    {% if row.user.is_active %}Active{% else %}Inactive{% endif %}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <a href="{% url 'role_user_edit' row.user.id %}" ><i class="ti ti-edit"></i></a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="text-center py-4">No users found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+
+    <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-primary" onclick="printPreviewFrame()">
+        Print
+      </button>
+    </div>
+
+    <iframe
+      id="docPreviewFrame"
+      src="{{ preview_url }}"
+      title="Document Preview"
+      onload="fitPreviewFrame()"
+      style="width:100%;height:1200px;border:1px solid #dee2e6;border-radius:.375rem;background:#fff;"
+      loading="lazy"></iframe>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+function fitPreviewFrame() {
+
+  const frame = document.getElementById('docPreviewFrame');
+
+  if (!frame || !frame.contentWindow) return;
+
+  const win = frame.contentWindow;
+  const doc = win.document;
+
+  if (!doc || !doc.body || !doc.documentElement) return;
+
+  let previewStyle = doc.getElementById('preview-fit-style');
+
+  if (!previewStyle) {
+    previewStyle = doc.createElement('style');
+    previewStyle.id = 'preview-fit-style';
+
+    previewStyle.textContent = `
+      html, body {
+        margin: 20px 10px !important;
+        padding: 20px 10px !important;
+        background: #fff !important;
+        width: max-content !important;
+        overflow: hidden !important;
+      }
+
+      body {
+        transform-origin: top left !important;
+      }
+    `;
+
+    doc.head.appendChild(previewStyle);
+  }
+
+  const body = doc.body;
+  const html = doc.documentElement;
+
+  body.style.transform = 'scale(1)';
+  body.style.width = 'auto';
+
+  const contentWidth = Math.max(
+    body.scrollWidth,
+    html.scrollWidth,
+    body.offsetWidth,
+    html.offsetWidth
+  );
+
+  const contentHeight = Math.max(
+    body.scrollHeight,
+    html.scrollHeight,
+    body.offsetHeight,
+    html.offsetHeight
+  );
+
+  const frameWidth = frame.clientWidth;
+
+  if (!contentWidth || !frameWidth) return;
+
+  const scale = frameWidth / contentWidth;
+
+  body.style.width = `${contentWidth}px`;
+  body.style.transform = `scale(${scale})`;
+
+  frame.style.height = `${Math.ceil(contentHeight * scale) + 10}px`;
+}
+
+function printPreviewFrame() {
+
+  const frame = document.getElementById('docPreviewFrame');
+
+  if (!frame || !frame.contentWindow) return;
+
+  const win = frame.contentWindow;
+  const doc = win.document;
+
+  if (!doc) return;
+
+  /* ✅ PRINT CSS (FIXED VERSION) */
+  let helperStyle = doc.getElementById('print-helper-style');
+
+  if (!helperStyle) {
+
+    helperStyle = doc.createElement('style');
+    helperStyle.id = 'print-helper-style';
+
+    helperStyle.textContent = `
+      @page {
+        size: A4;
+        margin: 10mm; /* Equal spacing */
+      }
+
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: visible !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        transform: none !important;
+        zoom: 1 !important;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      table {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    `;
+
+    doc.head.appendChild(helperStyle);
+  }
+
+  /* ✅ Fix background attribute */
+  doc.querySelectorAll('[background]').forEach((el) => {
+
+    const bg = el.getAttribute('background');
+    if (!bg) return;
+
+    el.style.backgroundImage = `url("${bg}")`;
+    el.style.backgroundRepeat = 'no-repeat';
+    el.style.backgroundSize = '100% 100%';
+    el.style.backgroundPosition = 'center';
+
+  });
+
+  /* ✅ Wait for images */
+  const imgs = Array.from(doc.images || []);
+
+  const pending = imgs
+    .filter(img => !img.complete)
+    .map(img => new Promise(resolve => {
+      img.onload = resolve;
+      img.onerror = resolve;
+    }));
+
+  Promise.all(pending).finally(() => {
+
+    win.focus();
+    win.print();
+
+  });
+
+}
+
+window.addEventListener('resize', fitPreviewFrame);
+
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+
+    <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-primary" onclick="printNirgamPreviewFrame()">
+        Print
+      </button>
+    </div>
+
+    <iframe
+      id="docPreviewFrameNirgam"
+      src="{{ preview_url }}"
+      title="Nirgam Document Preview"
+      style="width:100%;height:1200px;border:1px solid #dee2e6;border-radius:.375rem;background:#fff;"
+      loading="lazy"></iframe>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function printNirgamPreviewFrame() {
+  const frame = document.getElementById('docPreviewFrameNirgam');
+  if (!frame || !frame.contentWindow) {
+    return;
+  }
+  const win = frame.contentWindow;
+  const doc = win.document;
+  if (!doc) {
+    return;
+  }
+
+  let helperStyle = doc.getElementById('print-helper-style-nirgam');
+  if (!helperStyle) {
+    helperStyle = doc.createElement('style');
+    helperStyle.id = 'print-helper-style-nirgam';
+    doc.head.appendChild(helperStyle);
+  }
+  helperStyle.textContent = `
+    @page { size: A4 landscape; margin: 0 !important; }
+    html, body {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  `;
+
+  const imgs = Array.from(doc.images || []);
+  const pending = imgs
+    .filter((img) => !img.complete)
+    .map((img) => new Promise((resolve) => {
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+    }));
+
+  Promise.all(pending).finally(() => {
+    win.focus();
+    win.print();
+  });
+}
+</script>
+{% endblock %}

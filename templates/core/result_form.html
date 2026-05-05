@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}{% if object %}Edit Result{% else %}Add Result{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Edit Result{% else %}Add Result{% endif %}{% endblock %}
+{% block content %}
+<form method="post" data-result-form="true">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors|striptags }}</div>
+  {% endif %}
+
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">{{ form.student.label }}</label>
+              {{ form.student }}
+              {% if form.student.errors %}<div class="text-danger small">{{ form.student.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ form.exam.label }}</label>
+              {{ form.exam }}
+              {% if form.exam.errors %}<div class="text-danger small">{{ form.exam.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ form.subject_name.label }}</label>
+              {{ form.subject_name }}
+              {% if form.subject_name.errors %}<div class="text-danger small">{{ form.subject_name.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">{{ form.marks_obtained.label }}</label>
+              {{ form.marks_obtained }}
+              {% if form.marks_obtained.errors %}<div class="text-danger small">{{ form.marks_obtained.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">{{ form.max_marks.label }}</label>
+              {{ form.max_marks }}
+              {% if form.max_marks.errors %}<div class="text-danger small">{{ form.max_marks.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="col-12">
+              <label class="form-label">{{ form.remarks.label }}</label>
+              {{ form.remarks }}
+              {% if form.remarks.errors %}<div class="text-danger small">{{ form.remarks.errors|striptags }}</div>{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="mb-3">Result Summary</h6>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Marks</span>
+            <strong data-result-marks>0/100</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Percentage</span>
+            <strong data-result-percentage>0%</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2">
+            <span>Status</span>
+            <strong data-result-status>Fail</strong>
+          </div>
+          <div class="d-grid gap-2 mt-3">
+            <button type="submit" class="btn btn-primary">Save Result</button>
+            <a href="{% url 'result_list' %}" class="btn btn-outline-secondary">Back</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('[data-result-form="true"]');
+  if (!form) return;
+
+  const marksInput = form.querySelector('[name="marks_obtained"]');
+  const maxInput = form.querySelector('[name="max_marks"]');
+  const marksNode = form.querySelector('[data-result-marks]');
+  const percentageNode = form.querySelector('[data-result-percentage]');
+  const statusNode = form.querySelector('[data-result-status]');
+
+  const readNumber = (input, fallback) => {
+    const parsed = parseFloat(input?.value || fallback);
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+  };
+
+  const updateSummary = () => {
+    const marks = readNumber(marksInput, 0);
+    const maxMarks = Math.max(1, readNumber(maxInput, 100));
+    const percentage = Math.round((marks / maxMarks) * 10000) / 100;
+    const passed = percentage >= 35;
+
+    marksNode.textContent = `${marks}/${maxMarks}`;
+    percentageNode.textContent = `${percentage}%`;
+    statusNode.textContent = passed ? 'Pass' : 'Fail';
+    statusNode.classList.toggle('text-success', passed);
+    statusNode.classList.toggle('text-danger', !passed);
+  };
+
+  [marksInput, maxInput].forEach((input) => {
+    if (input) input.addEventListener('input', updateSummary);
+  });
+  updateSummary();
+});
+</script>
+{% endblock %}

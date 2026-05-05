@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Fee Receipt {{ receipt.receipt_no }}{% endblock %}
+{% block page_title %}Fee Receipt{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end gap-2 mb-3 print-actions">
+  <a href="{% url 'fee_receipt_list' %}" class="btn btn-outline-secondary">Back</a>
+  <a href="{% url 'fee_receipt_edit' receipt.id %}" class="btn btn-outline-primary">Edit</a>
+  <button type="button" class="btn btn-primary" onclick="window.print()">Print Receipt</button>
+</div>
+
+<div class="card  fee-print-card">
+  <div class="card-body p-4">
+    <div class="text-center border-bottom pb-3 mb-3">
+      <h4 class="mb-1">{% if current_school %}{{ current_school.name }}{% else %}School{% endif %}</h4>
+      {% if current_school.address %}<div class="text-muted">{{ current_school.address }}</div>{% endif %}
+      <h5 class="mt-3 mb-0">Fee Receipt</h5>
+    </div>
+
+    <div class="row g-2 mb-3">
+      <div class="col-md-6"><strong>Receipt No:</strong> {{ receipt.receipt_no }}</div>
+      <div class="col-md-6 text-md-end"><strong>Date:</strong> {{ receipt.receipt_date|date:"d M Y" }}</div>
+      <div class="col-md-6"><strong>Student Name:</strong> {{ receipt.student.name }}</div>
+      <div class="col-md-6 text-md-end"><strong>Class:</strong> {{ receipt.student.student_class }}{% if receipt.student.section %} {{ receipt.student.section }}{% endif %}</div>
+      <div class="col-md-6"><strong>Admission No:</strong> {{ receipt.student.admission_no }}</div>
+      <div class="col-md-6 text-md-end"><strong>Roll No:</strong> {{ receipt.student.roll_no }}</div>
+    </div>
+
+    <h6 class="mb-2">Academic Fees</h6>
+    <table class="table table-bordered align-middle">
+      <tbody>
+        <tr><th>Tuition</th><td class="text-end">&#8377;{{ receipt.tuition_fee }}</td></tr>
+        <tr><th>Library</th><td class="text-end">&#8377;{{ receipt.library_fee }}</td></tr>
+        <tr><th>Lab</th><td class="text-end">&#8377;{{ receipt.lab_fee }}</td></tr>
+        <tr><th>Sports</th><td class="text-end">&#8377;{{ receipt.sports_fee }}</td></tr>
+        <tr><th>Other</th><td class="text-end">&#8377;{{ receipt.other_fee }}</td></tr>
+        <tr class="table-light"><th>Total</th><th class="text-end">&#8377;{{ receipt.academic_total }}</th></tr>
+        <tr><th>Donation (Optional)</th><td class="text-end">&#8377;{{ receipt.donation }}</td></tr>
+        <tr class="table-light"><th>Grand Total</th><th class="text-end">&#8377;{{ receipt.grand_total }}</th></tr>
+        <tr><th>Paid</th><td class="text-end">&#8377;{{ receipt.paid_amount }}</td></tr>
+        <tr><th>Pending</th><td class="text-end">&#8377;{{ receipt.pending_amount }}</td></tr>
+      </tbody>
+    </table>
+
+    {% if receipt.remarks %}
+      <p class="mb-4"><strong>Remarks:</strong> {{ receipt.remarks }}</p>
+    {% endif %}
+
+    <div class="row mt-5">
+      <div class="col-6">
+        <div class="border-top pt-2 text-center">Received By</div>
+      </div>
+      <div class="col-6">
+        <div class="border-top pt-2 text-center">Parent Signature</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@media print {
+  .sidebar,
+  .page-header,
+  .print-actions,
+  .alert {
+    display: none !important;
+  }
+
+  .main-content {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .fee-print-card {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+}
+</style>
+{% endblock %}

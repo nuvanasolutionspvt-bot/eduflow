@@ -1,0 +1,121 @@
+{% load static %}
+<html dir="ltr" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="format-detection" content="telephone=no">
+  <title></title>
+</head>
+
+<body class="body test" style="margin:0; padding:0; transform: none !important;">
+  <div dir="ltr" class="es-wrapper-color" style="background-color:#f6f6f6;">
+
+    <table width="100%" cellspacing="0" cellpadding="0" class="es-wrapper" style="width:100%; background-color:#f6f6f6;">
+      <tbody>
+        <tr>
+          <td valign="top">
+
+            <table cellspacing="0" cellpadding="0" align="center" width="100%">
+              <tbody>
+                <tr>
+                  <td align="center">
+
+                    <table align="center" width="1600" cellspacing="0" cellpadding="0" bgcolor="#ffffff"
+                      style="width:1600px; background-color:#ffffff;">
+
+                      <tbody>
+                        <tr>
+                          <td align="left" style="padding:0;">
+
+                            <table cellspacing="0" cellpadding="0" width="1600">
+                              <tbody>
+                                <tr>
+                                  <td width="1600" align="left">
+
+                                    <table width="1600" height="800" cellspacing="0" cellpadding="0"
+                                      background="{% static 'images/hall-ticket1st.png' %}"
+                                      style="width:1600px; height:800px;
+                                             background-image:url('{% static 'images/hall-ticket1st.png' %}');
+                                             background-size:1600px 800px;
+                                             background-repeat:no-repeat;
+                                             background-position:left top;">
+
+                                      <tbody>
+                                        
+                                        <tr>
+                                          <td style="padding:250px 120px; font-family:Arial, sans-serif;">
+
+                                            <p style="margin:20px 0; font-size:36px; color:#000080; font-weight:bold;">
+                                              Candidate's Name: {{ student.name }}
+                                            </p>
+
+                                            <p style="margin:20px 0; font-size:36px; color:#000080; font-weight:bold;">
+                                              Father's Name: {{ student.father_name }}
+                                            </p>
+
+                                            <p style="margin:20px 0; font-size:36px; color:#000080; font-weight:bold;">
+                                              Exam Center:
+                                              <span style="color:#d00000;">{{ school.school_name }}, {{ school.address }}</span>
+                                            </p>
+
+                                            <p style="margin:20px 0; font-size:36px; color:#000080; font-weight:bold;">
+                                              Class: {{ student.student_class }}{% if student.section %} - {{ student.section }}{% endif %} &nbsp;&nbsp;&nbsp;&nbsp;
+                                              Seat No: <span style="color:#d00000;">{{ seat_number }}</span>
+                                            </p>
+
+                                          </td>
+                                        </tr>
+                                      </tbody>
+
+                                    </table>
+
+                                    <!-- ðŸ“Œ ADDED PASSPORT PHOTO BOX -->
+                                    <div style="
+                                      position:absolute;
+                                      top:260px;
+                                      right:180px;
+                                      width:130px;
+                                      height:170px;
+                                      border:3px solid #000;
+                                      background:#ffffff;
+                                      text-align:center;
+                                      font-size:18px;
+                                      font-weight:bold;
+                                      display:flex;
+                                      align-items:center;
+                                      justify-content:center;
+                                    ">
+                                      {% if student.photo %}
+                                        <img src="{{ student.photo.url }}" alt="Student Photo" style="width:100%;height:100%;object-fit:cover;">
+                                      {% elif student_photo %}
+                                        <img src="{{ student_photo }}" alt="Student Photo" style="width:100%;height:100%;object-fit:cover;">
+                                      {% else %}
+                                        PHOTO
+                                      {% endif %}
+                                    </div>
+                                    <!-- END ADDED BLOCK -->
+
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</body>
+</html>

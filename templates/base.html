@@ -1,0 +1,217 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% if current_school %}{{ current_school.name }}{% else %}School Administration{% endif %}{% endblock %}</title>
+  <link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+  <link rel="stylesheet"  href="{% static 'assets/css/main.css' %}">
+  <link rel="stylesheet"  href="{% static 'assets/css/style.css' %}">
+
+  <style>
+    .sidebar .documents-toggle {
+      width: auto;
+    }
+    .sidebar .documents-toggle .ti-chevron-down {
+      font-size: 14px;
+      transition: transform .2s ease;
+    }
+    .sidebar .documents-toggle[aria-expanded="true"] .ti-chevron-down {
+      transform: rotate(180deg);
+    }
+    .sidebar .documents-submenu {
+      margin: 0 12px 4px;
+      padding-left: 12px;
+      border-left: 1px solid #e5e7eb;
+    }
+    .sidebar .documents-submenu .nav-link {
+      margin: 1px 0;
+      padding: 7px 10px;
+      font-size: 13px;
+      gap: 10px;
+    }
+    .sidebar .documents-submenu .nav-link .ti {
+      font-size: 16px;
+    }
+    .sidebar.collapsed .documents-submenu {
+      display: none;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="overlay" class="overlay"></div>
+  <!-- TOPBAR -->
+  <nav id="topbar" class="navbar bg-white border-bottom fixed-top topbar px-5">
+    <button id="toggleBtn" class="d-none d-lg-inline-flex btn btn-light btn-icon btn-sm ">
+      <i class="ti ti-layout-sidebar-left-expand"></i>
+    </button>
+
+    <!-- MOBILE -->
+    <button id="mobileBtn" class="btn btn-light btn-icon btn-sm d-lg-none me-2">
+      <i class="ti ti-layout-sidebar-left-expand"></i>
+    </button>
+    <div>
+      <!-- Navbar nav -->
+      <ul class="list-unstyled d-flex align-items-center mb-0 gap-1">
+        <!-- Pages link -->
+
+     
+        <!-- Dropdown -->
+        <li class="ms-3 dropdown">
+          <a href="#" role="button" class="btn btn-light btn-icon btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+           <i class="ti ti-settings "></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end p-0" style="min-width: 200px;">
+            <div>
+              <div class="d-flex gap-3 align-items-center border-dashed border-bottom px-3 py-3">
+                
+                <div>
+                  <h4 class="mb-0 small">Shrina Tesla</h4>
+                  
+                </div>
+              </div>
+              <div class="p-3 d-flex flex-column gap-1 small lh-lg">
+                <a class="nav-link" href="{% url 'school_settings' %}"><span
+            class="nav-text">Account Settings</a>
+             <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="nav-link  border-0 bg-transparent w-100 text-start">
+               <span
+            class="nav-text">Logout
+              </button>
+            </form>
+              </div>
+              
+
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </nav>
+     <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar px-0">
+    <div class="logo-area">
+     <a  href="{% url 'dashboard' %}" class="d-inline-flex"><img src="./assets/images/tetsing.svg" alt="" width="24">
+        <span class="logo-text ms-2"> <img src="./assets/images/tetsing.svg" alt=""></span>
+      </a>
+    </div>
+    <ul class="nav flex-column pt-3">
+          <li ><a class="nav-link active" href="{% url 'dashboard' %}"><i class="ti ti-home me-2"></i><span
+            class="nav-text">Dashboard</span></a></li>
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.add_student %}
+          <li ><a class="nav-link" href="{% url 'student_add' %}"><i class="ti ti-user-plus me-2"></i><span
+            class="nav-text">Add Student</a></span></li>
+          {% endif %}
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.add_student %}
+          <li ><a class="nav-link" href="{% url 'student_bulk_import' %}"><i class="ti ti-upload me-2"></i><span
+            class="nav-text">Import Students</a></span></li>
+          {% endif %}
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_student %}
+          <li ><a class="nav-link" href="{% url 'student_list' %}"><i class="ti ti-users-group me-2"></i><span
+            class="nav-text">View Students</a></span></li>
+          {% endif %}
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_feereceipt %}
+          <li ><a class="nav-link" href="{% url 'fee_receipt_list' %}"><i class="ti ti-receipt-2 me-2"></i><span
+            class="nav-text">Fee Management</a></span></li>
+          {% endif %}
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_student or perms.core.view_documenttemplatesetting %}
+          <li>
+            <button
+              class="nav-link documents-toggle border-0 bg-transparent text-start{% if '/documents/' in request.path or '/templates/customize/' in request.path %} active{% endif %}"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#documentsGenerationMenu"
+              aria-expanded="{% if '/documents/' in request.path or '/templates/customize/' in request.path %}true{% else %}false{% endif %}"
+              aria-controls="documentsGenerationMenu">
+              <i class="ti ti-files me-2"></i>
+              <span class="nav-text flex-grow-1">Generate Documents</span>
+              <i class="ti ti-chevron-down ms-auto nav-text"></i>
+            </button>
+            <div
+              class="documents-submenu collapse {% if '/documents/' in request.path or '/templates/customize/' in request.path %}show{% endif %}"
+              id="documentsGenerationMenu">
+              <ul class="nav flex-column">
+                <li><a class="nav-link documents-submenu-link" href="{% url 'idcard_form' %}"><i class="ti ti-id me-2"></i><span
+                  class="nav-text">Generate ID Card</span></a></li>
+                <li><a class="nav-link documents-submenu-link" href="{% url 'bonafide_form' %}"><i class="ti ti-file-description me-2"></i><span
+                  class="nav-text">Generate Bonafide</span></a></li>
+                <li><a class="nav-link documents-submenu-link" href="{% url 'nirgam_form' %}"><i class="ti ti-file-description me-2"></i><span
+                  class="nav-text">Generate Nirgam</span></a></li>
+                <li><a class="nav-link documents-submenu-link" href="{% url 'hallticket_form' %}"><i class="ti ti-article me-2"></i><span
+                  class="nav-text">Generate Hall Ticket</span></a></li>
+                {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_documenttemplatesetting %}
+                <li><a class="nav-link documents-submenu-link" href="{% url 'template_customizer_home' %}"><i class="ti ti-pencil-cog me-2"></i><span
+                  class="nav-text">Customize Templates</span></a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_exam %}
+          <li ><a class="nav-link" href="{% url 'exam_list' %}"><i class="ti ti-brand-asana me-2"></i><span
+            class="nav-text">Manage Exams</a></span></li>
+          {% endif %}
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_result %}
+          <li ><a class="nav-link" href="{% url 'result_list' %}"><i class="ti ti-report-analytics me-2"></i><span
+            class="nav-text">Results</a></span></li>
+          {% endif %}
+         
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin %}
+          <li ><a class="nav-link" href="{% url 'subscription' %}"><i class="ti ti-credit-card me-2"></i><span
+            class="nav-text">Subscription</a></span></li>
+          {% endif %}
+          {% if request.user.is_staff or request.user.tenant_profile.is_school_admin or perms.core.view_schoolrole %}
+          <li ><a class="nav-link" href="{% url 'role_control' %}"><i class="ti ti-shield-lock me-2"></i><span
+            class="nav-text">Role Control</a></span></li>
+          {% endif %}
+          <li >
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="nav-link text-danger border-0 bg-transparent w-100 text-start">
+                <i class="ti ti-logout me-2"></i><span
+            class="nav-text">Logout
+              </button>
+            </form>
+          </li>
+    </ul>
+
+  </aside>
+ 
+
+
+
+    <main  id="content" class="content py-10">
+      <div class="container-fluid">
+     
+
+    
+      {% if messages %}
+      <div class="mb-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+      
+      </div>
+    </main>
+  
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}?v=20260331-1"></script>
+<script src="{% static 'assets/js/main.js' %}"></script>
+<script src="{% static 'assets/js/sidebar.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

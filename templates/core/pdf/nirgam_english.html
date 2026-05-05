@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+
+    body {
+      margin: 0;
+      padding-top: 50px;
+      padding-left: 30px;
+      padding-right: 30px;
+      font-family: "Times New Roman", Georgia, serif;
+      color: #111;
+      font-size: 12px;
+    }
+
+    .sheet {
+      width: 100%;
+    }
+
+    .title-wrap {
+      text-align: center;
+      margin: 2px 0 10px;
+    }
+
+    .title-wrap h1,
+    .title-wrap h2 {
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .title-wrap h1 {
+      font-size: 24px;
+    }
+
+    .title-wrap h2 {
+      font-size: 18px;
+      margin-top: 8px;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .meta-item {
+      white-space: nowrap;
+    }
+
+    .meta-item span {
+      display: inline-block;
+      min-width: 160px;
+      border-bottom: 1px solid #111;
+      line-height: 1.1;
+      vertical-align: middle;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border: 1px solid #111;
+      text-align: center;
+      vertical-align: middle;
+      padding: 2px;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    thead th {
+      font-size: 10px;
+      font-weight: 700;
+      height: 66px;
+    }
+
+    .vertical {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      white-space: nowrap;
+      height: 122px;
+      line-height: 1.1;
+    }
+
+    .nums th {
+      font-weight: 600;
+      height: 26px;
+      font-size: 10px;
+    }
+
+    tbody td {
+      height: 190px;
+      vertical-align: top;
+      font-size: 11px;
+    }
+
+    .left {
+      text-align: left;
+      padding-left: 4px;
+    }
+
+    .foot {
+      margin-top: 14px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .foot .left-meta {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .line {
+      display: inline-block;
+      min-width: 220px;
+      border-bottom: 1px solid #111;
+      vertical-align: middle;
+    }
+
+    .stamp {
+      width: 84px;
+      height: 84px;
+      border: 2px solid #111;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.1;
+    }
+
+    .sign {
+      min-width: 280px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="title-wrap">
+      <h1>{{ title_primary|default:'Student Admission Register (As per Govt. Rules)' }}</h1>
+      <h2>{{ title_secondary|default:'Student Admission Leaving Register' }}</h2>
+    </div>
+
+    <div class="meta">
+      <div class="meta-item">School Name : <span>{{ school.school_name|default:'' }}</span></div>
+      <div class="meta-item">Taluka : <span>{{ student.taluka|default:'' }}</span></div>
+      <div class="meta-item">Dist. : <span>{{ student.district|default:'' }}</span></div>
+      <div class="meta-item">Reg. Page No. : <span>{{ student.register_page_no|default:'' }}</span></div>
+    </div>
+
+    <table>
+      <colgroup>
+        <col style="width:3.6%">
+        <col style="width:8%">
+        <col style="width:4%">
+        <col style="width:5.5%">
+        <col style="width:4%">
+        <col style="width:3.8%">
+        <col style="width:3.2%">
+        <col style="width:3.2%">
+        <col style="width:3.2%">
+        <col style="width:4.2%">
+        <col style="width:4.2%">
+        <col style="width:4.2%">
+        <col style="width:4%">
+        <col style="width:2.8%">
+        <col style="width:5.5%">
+        <col style="width:3.8%">
+        <col style="width:4.5%">
+        <col style="width:3.8%">
+        <col style="width:4%">
+        <col style="width:6.5%">
+        <col style="width:4.5%">
+        <col style="width:3.5%">
+      </colgroup>
+
+      <thead>
+        <tr>
+          <th rowspan="2"><div class="vertical">Admission</div></th>
+          <th rowspan="2">Student's Full Name and Address (as in Aadhaar)</th>
+          <th rowspan="2"><div class="vertical">Mother's Name</div></th>
+          <th rowspan="2">Father's / Guardian's Name and Address</th>
+          <th rowspan="2">Religion / Caste</th>
+          <th rowspan="2"><div class="vertical">Occupation</div></th>
+          <th rowspan="2"><div class="vertical">Birth Place</div></th>
+          <th rowspan="2"><div class="vertical">Admission Date</div></th>
+          <th rowspan="2"><div class="vertical">Mother Tongue</div></th>
+          <th colspan="2">Date of Birth (DOB)</th>
+          <th colspan="2">Previous School</th>
+          <th rowspan="2"><div class="vertical">Admission Class</div></th>
+          <th rowspan="2">Identification Mark of Student</th>
+          <th rowspan="2"><div class="vertical">Admission Order Sign</div></th>
+          <th rowspan="2">Class</th>
+          <th rowspan="2"><div class="vertical">Reason of School Leaving</div></th>
+          <th rowspan="2"><div class="vertical">T.C. Register Date</div></th>
+          <th rowspan="2">Admission Officer Sign</th>
+          <th rowspan="2"><div class="vertical">Principal Sign</div></th>
+          <th rowspan="2"><div class="vertical">Remark</div></th>
+        </tr>
+
+        <tr>
+          <th>In Numbers</th>
+          <th>In Words</th>
+          <th>School Name</th>
+          <th>Std.</th>
+        </tr>
+
+        <tr class="nums">
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th><th>22</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>{{ student.roll_no|default:'-' }}</td>
+         <td class="left">
+  <div class="vertical">
+    {{ student.name }}<br>
+    {{ student.address|default:'' }}
+  </div>
+</td>
+        <td><div class="vertical">{{ student.mother_name|default:'-' }}</div></td>
+
+<td><div class="vertical">{{ student.father_name|default:'-' }}</div></td>
+
+<td>
+  <div class="vertical">
+    {{ student.religion|default:'' }}
+    {% if student.religion and student.caste %}<br>{% endif %}
+    {{ student.caste|default:'' }}
+  </div>
+</td>
+
+<td><div class="vertical">{{ student.father_occupation|default:'' }}</div></td>
+
+<td><div class="vertical">{{ student.birth_place|default:'' }}</div></td>
+
+<td><div class="vertical">{{ today|date:"d/m/Y" }}</div></td>
+
+<td><div class="vertical">{{ student.mother_tongue|default:'' }}</div></td>
+
+<td><div class="vertical">{{ student.dob|date:"d/m/Y" }}</div></td>
+
+<td><div class="vertical"></div></td>
+
+<td><div class="vertical">{{ student.previous_school_name|default:'' }}</div></td>
+
+<td><div class="vertical">{{ student.previous_school_class|default:'' }}</div></td>
+
+<td><div class="vertical">{{ student.admission_no }}</div></td>
+
+<td><div class="vertical"></div></td>
+
+<td><div class="vertical"></div></td>
+
+<td><div class="vertical">{{ student.student_class }}-{{ student.section }}</div></td>
+
+<td class="left">
+  <div class="vertical">{{ reason|default:'' }}</div>
+</td>
+
+<td>
+  <div class="vertical">
+    {% if leaving_date %}{{ leaving_date }}{% endif %}
+  </div>
+</td>
+
+<td><div class="vertical"></div></td>
+
+<td>
+  <div class="vertical">
+    {% if principal_signature %}
+      <img src="{{ principal_signature }}" style="max-height:42px;">
+    {% endif %}
+  </div>
+</td>
+
+<td class="left">
+  <div class="vertical">{{ conduct_remarks|default:'' }}</div>
+</td>
+</tr>
+    </table>
+
+    <div class="foot">
+      <div class="left-meta">
+        Date : <span class="line">{% if leaving_date %}{{ leaving_date }}{% else %}{{ today|date:"d/m/Y" }}{% endif %}</span><br>
+        Place : <span class="line"></span>
+      </div>
+
+      <div class="stamp">Seal of<br>School</div>
+
+      <div class="sign">
+        {% if principal_signature %}<img src="{{ principal_signature }}" style="max-height:56px;"><br>{% endif %}
+        Sign<br>
+        Headmaster/Principal
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

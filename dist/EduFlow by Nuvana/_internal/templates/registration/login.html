@@ -1,0 +1,49 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - School Administration</title>
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center" style="min-height:100vh;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h4 class="text-center mb-3">Admin Login</h4>
+            {% if not has_admin_user %}
+              <div class="alert alert-warning py-2">
+                No admin user found. Run <code>python manage.py create_admin_user</code> first.
+              </div>
+            {% endif %}
+            <form method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label class="form-label">Username</label>
+                {{ form.username }}
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                {{ form.password }}
+              </div>
+              {% if form.errors %}
+                <div class="alert alert-danger py-2">{{ form.non_field_errors|striptags|default:'Invalid username or password.' }}</div>
+              {% endif %}
+              <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+
+
+

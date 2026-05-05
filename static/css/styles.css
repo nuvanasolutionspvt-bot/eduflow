@@ -1,0 +1,509 @@
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.tenant-app {
+  background:
+    radial-gradient(circle at top left, rgba(13, 110, 253, 0.08), transparent 28%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+
+.sidebar {
+  min-height: 100vh;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 0 0 32px rgba(15, 23, 42, 0.04);
+  transition: margin-left 0.25s ease, opacity 0.25s ease;
+}
+
+.sidebar-inner {
+  padding-bottom: 1.5rem;
+}
+
+.sidebar-nav .nav-item + .nav-item {
+  margin-top: 2px;
+}
+
+.sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #334155;
+  margin-bottom: 0;
+  border-radius: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.sidebar .nav-link i {
+  font-size: 1rem;
+}
+
+.sidebar .nav-link:hover {
+  background: #e9f2ff;
+  color: #0d6efd;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link.active:hover {
+  background: #0d6efd;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+}
+
+.sidebar .nav-link.text-danger {
+  color: #b91c1c;
+}
+
+.sidebar .nav-link.text-danger:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.text-sidebar-brand {
+  color: #0f172a;
+}
+
+.tenant-brand-card {
+  padding: 1rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.tenant-brand-media {
+  margin-bottom: 0.75rem;
+}
+
+.tenant-brand-placeholder {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9f2ff;
+  color: #2563eb;
+  font-size: 1.4rem;
+}
+
+.tenant-brand-label,
+.dashboard-section-label {
+  margin-bottom: 0.35rem;
+  color: #64748b;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tenant-brand-address {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.school-logo {
+  max-height: 60px;
+}
+
+.main-content {
+  padding-bottom: 2.5rem;
+}
+
+.page-header {
+  border: 1px solid #e5e7eb;
+}
+
+.page-header h1 {
+  color: #111827;
+}
+
+.tenant-chip,
+.tenant-user-chip {
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 999px;
+  background: #f8fbff;
+  color: #0f172a;
+  font-size: 0.88rem;
+}
+
+.tenant-chip-label {
+  color: #64748b;
+}
+
+.tenant-chip-value {
+  font-weight: 600;
+}
+
+.tenant-user-chip i {
+  color: #2563eb;
+}
+
+.card {
+  border-radius: 0.9rem;
+  border-color: #e5e7eb;
+}
+
+.card-stat {
+  border-left: 4px solid #0d6efd;
+}
+
+.card-stat .card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-stat .icon-pill {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+}
+
+.card-stat .card-body h2 {
+  font-size: 2rem;
+}
+
+.tenant-mini-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.tenant-mini-meta i {
+  color: #2563eb;
+}
+
+.tenant-note-box {
+  height: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 0.85rem;
+  background: #f8fbff;
+  color: #334155;
+  font-size: 0.92rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #111827;
+}
+
+.form-text {
+  font-size: 0.8rem;
+}
+
+select,
+input,
+textarea {
+  width: 100%;
+}
+
+.select2-container {
+  width: 100% !important;
+}
+
+.table thead th {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table tbody td {
+  font-size: 0.9rem;
+}
+
+.filter-pill {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.import-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(2px);
+  border-radius: 0.9rem;
+}
+
+.import-loading-panel {
+  min-width: 280px;
+  max-width: 360px;
+  padding: 1.25rem 1.5rem;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.9rem;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+}
+
+.tenant-auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(180deg, #f6f7fb 0%, #eef1f8 100%);
+}
+
+.tenant-auth-card {
+  max-width: 1280px;
+  margin: 0 auto;
+  border-radius: 1.75rem;
+  background: #ffffff;
+  border: 1px solid rgba(2, 6, 111, 0.08);
+  box-shadow: 0 28px 70px rgba(2, 6, 111, 0.12) !important;
+}
+
+.tenant-auth-side {
+  min-height: 700px;
+  display: flex;
+  align-items: center;
+}
+
+.tenant-auth-side-brand {
+  position: relative;
+  padding: 2.4rem 2.7rem;
+  color: #f8fafc;
+  background:
+    linear-gradient(180deg, rgba(2, 6, 111, 0.97), rgba(6, 24, 134, 0.96)),
+    linear-gradient(135deg, #02066F, #0b1f9c);
+}
+
+.tenant-auth-side-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 32px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 38%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.tenant-auth-side-form {
+  padding: 2rem 2.4rem;
+  background: #ffffff;
+}
+
+.tenant-auth-brand-wrap,
+.tenant-auth-form-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.tenant-auth-brand-wrap {
+  max-width: 470px;
+}
+
+.tenant-auth-logo {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.tenant-auth-logo-line {
+  width: 88px;
+  height: 4px;
+  margin: 0.45rem 0 1.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.tenant-auth-title {
+  max-width: 420px;
+  margin-bottom: 1rem;
+  font-size: 3.4rem;
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.tenant-auth-copy {
+  max-width: 420px;
+  color: rgba(226, 232, 240, 0.92);
+  font-size: 1.08rem;
+  line-height: 1.72;
+}
+
+.tenant-auth-list {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+
+.tenant-auth-list div {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-weight: 500;
+}
+
+.tenant-auth-list i {
+  color: #dbe7ff;
+}
+
+.tenant-auth-note {
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(226, 232, 240, 0.82);
+  font-size: 0.92rem;
+  font-style: italic;
+}
+
+.tenant-auth-form-wrap {
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.tenant-auth-heading {
+  color: #1f2937;
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.tenant-auth-subheading {
+  color: #6b7280;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.tenant-auth-static {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid #e6e8f0;
+  border-radius: 0.8rem;
+  background: #f4f5fb;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.tenant-auth-static .bi-chevron-down {
+  margin-left: auto;
+  font-size: 0.8rem;
+}
+
+.tenant-auth-shell .form-label {
+  margin-bottom: 0.45rem;
+  color: #4b5563;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.tenant-auth-shell input[type="text"],
+.tenant-auth-shell input[type="password"],
+.tenant-auth-shell input[type="email"],
+.tenant-auth-shell input[type="file"],
+.tenant-auth-shell textarea,
+.tenant-auth-shell select {
+  border: 1px solid #e7e9f3;
+  border-radius: 0.8rem;
+  background: #f4f5fb;
+  color: #111827;
+  min-height: 52px;
+  padding: 0.85rem 1rem;
+  box-shadow: none;
+}
+
+.tenant-auth-shell textarea {
+  min-height: 110px;
+}
+
+.tenant-auth-shell input:focus,
+.tenant-auth-shell textarea:focus,
+.tenant-auth-shell select:focus {
+  border-color: rgba(2, 6, 111, 0.28);
+  background: #ffffff;
+  box-shadow: 0 0 0 0.2rem rgba(2, 6, 111, 0.08);
+}
+
+.tenant-auth-inline-link {
+  color: #02066F;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.tenant-auth-primary-btn {
+  min-height: 52px;
+  border: 0;
+  border-radius: 0.8rem;
+  background: linear-gradient(180deg, #0638ad 0%, #02066F 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 12px 24px rgba(2, 6, 111, 0.22);
+}
+
+.tenant-auth-primary-btn:hover,
+.tenant-auth-primary-btn:focus {
+  color: #ffffff;
+  background: linear-gradient(180deg, #0741c5 0%, #02066F 100%);
+}
+
+.tenant-auth-divider {
+  height: 1px;
+  margin: 2rem 0 1.6rem;
+  background: #eceef5;
+}
+
+.tenant-auth-link {
+  color: #02066F;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tenant-auth-link:hover {
+  color: #02066F;
+  text-decoration: none;
+}
+
+.tenant-auth-footer i {
+  font-size: 0.8rem;
+}
+
+.tenant-auth-shell .form-check-input:checked {
+  background-color: #02066F;
+  border-color: #02066F;
+}
+
+.tenant-auth-shell .form-check-label {
+  color: #6b7280;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 991.98px) {
+  .tenant-auth-side {
+    min-height: auto;
+  }
+
+  .tenant-auth-side-brand,
+  .tenant-auth-side-form {
+    padding: 2rem;
+  }
+
+  .tenant-auth-title {
+    font-size: 2.5rem;
+  }
+
+  .tenant-auth-heading {
+    font-size: 1.9rem;
+  }
+}

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+
+    <div class="d-flex justify-content-between mb-3">
+      <h5 class="mb-0">ID Card Preview</h5>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-success" onclick="downloadIdCardPreviewAsJpg(this)">
+          Download JPG
+        </button>
+        <button type="button" class="btn btn-primary" onclick="printIdCardPreviewFrame()">
+          Print ID Card
+        </button>
+      </div>
+    </div>
+
+    <!-- Preview Frame -->
+    <iframe
+      id="idCardPreviewFrame"
+      src="{{ preview_url }}"
+      title="ID Card Preview"
+      style="width:100%; height:1100px; border:1px solid #dee2e6; border-radius:6px; background:#fff;"
+      loading="lazy">
+    </iframe>
+
+  </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="{% static 'js/html2canvas.min.js' %}"></script>
+<script>
+
+function triggerBlobDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function downloadIdCardPreviewAsJpg(button) {
+  const frame = document.getElementById('idCardPreviewFrame');
+  if (!frame || !frame.contentWindow || !frame.contentDocument) return;
+
+  const previousLabel = button ? button.textContent : '';
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Preparing JPG...';
+  }
+
+  try {
+    const frameWindow = frame.contentWindow;
+    const frameDocument = frame.contentDocument;
+    const pages = Array.from(frameDocument.querySelectorAll('.page'));
+    if (!pages.length) {
+      throw new Error('Preview is not ready yet.');
+    }
+
+    const admissionMatch =
+      (frameWindow.location.pathname || '').match(/\/documents\/id-card\/(\d+)\//);
+    const isBulk = frameWindow.location.pathname.includes('/bulk/');
+
+    for (let index = 0; index < pages.length; index += 1) {
+      if (button) {
+        button.textContent = pages.length > 1
+          ? `Preparing JPG ${index + 1}/${pages.length}...`
+          : 'Preparing JPG...';
+      }
+
+      const canvas = await html2canvas(pages[index], {
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        scale: 2,
+        width: 650,
+        height: 1028,
+        windowWidth: Math.max(frameWindow.innerWidth || 650, 650),
+        windowHeight: Math.max(frameWindow.innerHeight || 1028, 1028),
+      });
+
+      const jpegBlob = await new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error(`Could not export page ${index + 1} as JPG.`));
+          }
+        }, 'image/jpeg', 0.92);
+      });
+
+      const filename = isBulk
+        ? `id-card-${String(index + 1).padStart(2, '0')}.jpg`
+        : `id-card${admissionMatch ? `-${admissionMatch[1]}` : ''}.jpg`;
+      triggerBlobDownload(jpegBlob, filename);
+    }
+  } catch (error) {
+    alert(error?.message || 'Could not export JPG from the preview.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = previousLabel || 'Download JPG';
+    }
+  }
+}
+
+function printIdCardPreviewFrame() {
+
+  const frame = document.getElementById('idCardPreviewFrame');
+  if (!frame || !frame.contentWindow) return;
+
+  const win = frame.contentWindow;
+  const doc = win.document;
+
+  if (!doc) return;
+
+  // ensure colors print correctly
+  let style = doc.getElementById('print-helper-style-idcard');
+
+  if (!style) {
+    style = doc.createElement('style');
+    style.id = 'print-helper-style-idcard';
+
+    style.innerHTML = `
+      @media print {
+
+        html, body {
+          margin:0 !important;
+          padding:0 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+
+      }
+    `;
+
+    doc.head.appendChild(style);
+  }
+
+  // wait for images
+  const imgs = Array.from(doc.images || []);
+
+  const pending = imgs
+    .filter(img => !img.complete)
+    .map(img => new Promise(resolve => {
+      img.onload = resolve;
+      img.onerror = resolve;
+    }));
+
+  Promise.all(pending).then(() => {
+    win.focus();
+    win.print();
+  });
+
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% block title %}Student Form{% endblock %}
+{% block page_title %}{% if object %}Edit Student{% else %}Add Student{% endif %}{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data" class="row g-3" data-student-form="true" data-transliterate-url="{% url 'student_transliterate' %}">
+      {% csrf_token %}
+      <div class="col-12">
+        <div class="alert alert-info mb-0">
+          Marathi fields auto-fill while typing in the main fields. If you edit a Marathi field manually, auto-fill stops for that field.
+        </div>
+      </div>
+      <div class="col-12 pt-2">
+        <h6 class="text-uppercase text-muted small mb-1">Student details</h6>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.name.label }}</label>
+        {{ form.name }}
+        {% if form.name.errors %}<div class="text-danger small">{{ form.name.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.name_mr.label }}</label>
+        {{ form.name_mr }}
+        {% if form.name_mr.errors %}<div class="text-danger small">{{ form.name_mr.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-12 pt-2">
+        <h6 class="text-uppercase text-muted small mb-1">Parent & family</h6>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.father_name.label }}</label>
+        {{ form.father_name }}
+        {% if form.father_name.errors %}<div class="text-danger small">{{ form.father_name.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.father_name_mr.label }}</label>
+        {{ form.father_name_mr }}
+        {% if form.father_name_mr.errors %}<div class="text-danger small">{{ form.father_name_mr.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ form.mother_name.label }}</label>
+        {{ form.mother_name }}
+        {% if form.mother_name.errors %}<div class="text-danger small">{{ form.mother_name.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.mother_name_mr.label }}</label>
+        {{ form.mother_name_mr }}
+        {% if form.mother_name_mr.errors %}<div class="text-danger small">{{ form.mother_name_mr.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-12 pt-2">
+        <h6 class="text-uppercase text-muted small mb-1">Background</h6>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.religion.label }}</label>
+        {{ form.religion }}
+        {% if form.religion.errors %}<div class="text-danger small">{{ form.religion.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.religion_mr.label }}</label>
+        {{ form.religion_mr }}
+        {% if form.religion_mr.errors %}<div class="text-danger small">{{ form.religion_mr.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ form.caste.label }}</label>
+        {{ form.caste }}
+        {% if form.caste.errors %}<div class="text-danger small">{{ form.caste.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.caste_mr.label }}</label>
+        {{ form.caste_mr }}
+        {% if form.caste_mr.errors %}<div class="text-danger small">{{ form.caste_mr.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.mother_tongue.label }}</label>
+        {{ form.mother_tongue }}
+        {% if form.mother_tongue.errors %}<div class="text-danger small">{{ form.mother_tongue.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.mother_tongue_mr.label }}</label>
+        {{ form.mother_tongue_mr }}
+        {% if form.mother_tongue_mr.errors %}<div class="text-danger small">{{ form.mother_tongue_mr.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ form.father_occupation.label }}</label>
+        {{ form.father_occupation }}
+        {% if form.father_occupation.errors %}<div class="text-danger small">{{ form.father_occupation.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.father_occupation_mr.label }}</label>
+        {{ form.father_occupation_mr }}
+        {% if form.father_occupation_mr.errors %}<div class="text-danger small">{{ form.father_occupation_mr.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-12 pt-2">
+        <h6 class="text-uppercase text-muted small mb-1">Birth & address</h6>
+      </div>
+       <div class="col-md-6">
+        <label class="form-label">{{ form.birth_place.label }}</label>
+        {{ form.birth_place }}
+        {% if form.birth_place.errors %}<div class="text-danger small">{{ form.birth_place.errors|striptags }}</div>{% endif %}
+      </div>
+
+       <div class="col-md-6">
+        <label class="form-label">{{ form.birth_place_mr.label }}</label>
+        {{ form.birth_place_mr }}
+        {% if form.birth_place_mr.errors %}<div class="text-danger small">{{ form.birth_place_mr.errors|striptags }}</div>{% endif %}
+      </div>
+
+        <div class="col-md-6">
+        <label class="form-label">{{ form.taluka.label }}</label>
+        {{ form.taluka }}
+        {% if form.taluka.errors %}<div class="text-danger small">{{ form.taluka.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ form.taluka_mr.label }}</label>
+        {{ form.taluka_mr }}
+        {% if form.taluka_mr.errors %}<div class="text-danger small">{{ form.taluka_mr.errors|striptags }}</div>{% endif %}
+      </div>
+
+       <div class="col-md-6">
+        <label class="form-label">{{ form.district.label }}</label>
+        {{ form.district }}
+        {% if form.district.errors %}<div class="text-danger small">{{ form.district.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ form.district_mr.label }}</label>
+        {{ form.district_mr }}
+        {% if form.district_mr.errors %}<div class="text-danger small">{{ form.district_mr.errors|striptags }}</div>{% endif %}
+      </div>
+       <div class="col-md-6">
+        <label class="form-label">{{ form.previous_school_name.label }}</label>
+        {{ form.previous_school_name }}
+        {% if form.previous_school_name.errors %}<div class="text-danger small">{{ form.previous_school_name.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.previous_school_name_mr.label }}</label>
+        {{ form.previous_school_name_mr }}
+        {% if form.previous_school_name_mr.errors %}<div class="text-danger small">{{ form.previous_school_name_mr.errors|striptags }}</div>{% endif %}
+      </div>
+
+
+       <div class="col-md-6">
+        <label class="form-label">{{ form.address.label }}</label>
+        {{ form.address }}
+        {% if form.address.errors %}<div class="text-danger small">{{ form.address.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ form.address_mr.label }}</label>
+        {{ form.address_mr }}
+        {% if form.address_mr.errors %}<div class="text-danger small">{{ form.address_mr.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.dob.label }}</label>
+        {{ form.dob }}
+        {% if form.dob.errors %}<div class="text-danger small">{{ form.dob.errors|striptags }}</div>{% endif %}
+      </div>
+     
+
+     
+    
+     
+      <div class="col-md-6">
+        <label class="form-label">{{ form.student_class.label }}</label>
+        {{ form.student_class }}
+        {% if form.student_class.errors %}<div class="text-danger small">{{ form.student_class.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.section.label }}</label>
+        {{ form.section }}
+        {% if form.section.errors %}<div class="text-danger small">{{ form.section.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.roll_no.label }}</label>
+        {{ form.roll_no }}
+        {% if form.roll_no.errors %}<div class="text-danger small">{{ form.roll_no.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ form.admission_no.label }}</label>
+        {{ form.admission_no }}
+        {% if form.admission_no.errors %}<div class="text-danger small">{{ form.admission_no.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.register_page_no.label }}</label>
+        {{ form.register_page_no }}
+        {% if form.register_page_no.errors %}<div class="text-danger small">{{ form.register_page_no.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.previous_school_class.label }}</label>
+        {{ form.previous_school_class }}
+        {% if form.previous_school_class.errors %}<div class="text-danger small">{{ form.previous_school_class.errors|striptags }}</div>{% endif %}
+      </div>
+     
+      <div class="col-md-6">
+        <label class="form-label">{{ form.mobile.label }}</label>
+        {{ form.mobile }}
+        {% if form.mobile.errors %}<div class="text-danger small">{{ form.mobile.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{{ form.photo.label }}</label>
+        {{ form.photo }}
+        {% if form.photo.errors %}<div class="text-danger small">{{ form.photo.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">{{ form.status.label }}</label>
+        {{ form.status }}
+        {% if form.status.errors %}<div class="text-danger small">{{ form.status.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a class="btn btn-outline-secondary" href="{% url 'student_list' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

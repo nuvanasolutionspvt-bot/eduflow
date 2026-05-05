@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}Add Results{% endblock %}
+{% block page_title %}Add Results{% endblock %}
+{% block page_subtitle %}
+  <p class="text-muted mb-0">Enter multiple subjects for first term and second term together.</p>
+{% endblock %}
+{% block content %}
+<form method="post" data-bulk-result-form="true">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors|striptags }}</div>
+  {% endif %}
+  {% if row_errors %}
+    <div class="alert alert-danger">
+      {% for error in row_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">{{ form.student.label }}</label>
+          {{ form.student }}
+          {% if form.student.errors %}<div class="text-danger small">{{ form.student.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ form.first_term.label }}</label>
+          {{ form.first_term }}
+          {% if form.first_term.errors %}<div class="text-danger small">{{ form.first_term.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ form.second_term.label }}</label>
+          {{ form.second_term }}
+          {% if form.second_term.help_text %}<div class="form-text">{{ form.second_term.help_text }}</div>{% endif %}
+          {% if form.second_term.errors %}<div class="text-danger small">{{ form.second_term.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+        <div>
+          <h6 class="mb-0">Subjects</h6>
+          <div class="filter-pill">Use Add Subject to enter more rows on the same page.</div>
+        </div>
+        <button type="button" class="btn btn-outline-primary" data-add-subject-row>
+          <i class="ti ti-plus me-1"></i>Add Subject
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="min-width:180px;">Subject</th>
+              <th class="text-end">First Marks</th>
+              <th class="text-end">First Max</th>
+              <th class="text-end">Second Marks</th>
+              <th class="text-end">Second Max</th>
+              <th style="min-width:160px;">Remarks</th>
+              <th class="text-end">Action</th>
+            </tr>
+          </thead>
+          <tbody data-subject-rows>
+            {% if posted_rows %}
+              {% for row in posted_rows %}
+                <tr>
+                  <td><input class="form-control" name="subject_name[]" value="{{ row.subject_name }}" placeholder="Subject name"></td>
+                  <td><input class="form-control text-end" type="number" step="0.01" min="0" name="first_marks[]" value="{{ row.first_marks }}"></td>
+                  <td><input class="form-control text-end" type="number" step="0.01" min="1" name="first_max[]" value="{{ row.first_max|default:'100' }}"></td>
+                  <td><input class="form-control text-end" type="number" step="0.01" min="0" name="second_marks[]" value="{{ row.second_marks }}"></td>
+                  <td><input class="form-control text-end" type="number" step="0.01" min="1" name="second_max[]" value="{{ row.second_max|default:'100' }}"></td>
+                  <td><input class="form-control" name="remarks[]" value="{{ row.remarks }}" placeholder="Optional"></td>
+                  <td class="text-end"><button type="button" class="btn btn-sm btn-outline-danger" data-remove-subject-row><i class="ti ti-trash"></i></button></td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td><input class="form-control" name="subject_name[]" placeholder="Subject name"></td>
+                <td><input class="form-control text-end" type="number" step="0.01" min="0" name="first_marks[]"></td>
+                <td><input class="form-control text-end" type="number" step="0.01" min="1" name="first_max[]" value="100"></td>
+                <td><input class="form-control text-end" type="number" step="0.01" min="0" name="second_marks[]"></td>
+                <td><input class="form-control text-end" type="number" step="0.01" min="1" name="second_max[]" value="100"></td>
+                <td><input class="form-control" name="remarks[]" placeholder="Optional"></td>
+                <td class="text-end"><button type="button" class="btn btn-sm btn-outline-danger" data-remove-subject-row><i class="ti ti-trash"></i></button></td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <a href="{% url 'result_list' %}" class="btn btn-outline-secondary">Back</a>
+        <button type="submit" class="btn btn-primary">Save Results</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const tableBody = document.querySelector('[data-subject-rows]');
+  const addButton = document.querySelector('[data-add-subject-row]');
+  if (!tableBody || !addButton) return;
+
+  function rowTemplate() {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input class="form-control" name="subject_name[]" placeholder="Subject name"></td>
+      <td><input class="form-control text-end" type="number" step="0.01" min="0" name="first_marks[]"></td>
+      <td><input class="form-control text-end" type="number" step="0.01" min="1" name="first_max[]" value="100"></td>
+      <td><input class="form-control text-end" type="number" step="0.01" min="0" name="second_marks[]"></td>
+      <td><input class="form-control text-end" type="number" step="0.01" min="1" name="second_max[]" value="100"></td>
+      <td><input class="form-control" name="remarks[]" placeholder="Optional"></td>
+      <td class="text-end"><button type="button" class="btn btn-sm btn-outline-danger" data-remove-subject-row><i class="ti ti-trash"></i></button></td>
+    `;
+    return tr;
+  }
+
+  addButton.addEventListener('click', function () {
+    tableBody.appendChild(rowTemplate());
+  });
+
+  tableBody.addEventListener('click', function (event) {
+    const button = event.target.closest('[data-remove-subject-row]');
+    if (!button) return;
+    if (tableBody.querySelectorAll('tr').length === 1) {
+      button.closest('tr').querySelectorAll('input').forEach((input) => {
+        input.value = input.name.includes('max') ? '100' : '';
+      });
+      return;
+    }
+    button.closest('tr').remove();
+  });
+});
+</script>
+{% endblock %}
