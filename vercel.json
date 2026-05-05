@@ -1,22 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "builds": [
+  "rewrites": [
     {
-      "src": "school_admin/wsgi.py",
-      "use": "@vercel/python",
-      "config": {
-        "excludeFiles": "{build/**,dist/**,dist_dob_fix/**,dist_idcard_bulk/**,venv/**,media/**,*.sqlite3,*.sqlite3-journal,*.spec,*.log,__pycache__/**,**/__pycache__/**,**/*.pyc,core/test_*.py,core/tests.py}"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "school_admin/wsgi.py"
+      "source": "/(.*)",
+      "destination": "/app.py"
     }
   ]
 }
